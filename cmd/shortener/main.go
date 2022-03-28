@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -14,14 +15,15 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusCreated)
-		//q := r.URL.Query().Get("query")
-		//if q == "" {
-		//	http.Error(w, "The query parameter is missing", http.StatusBadRequest)
-		//	return
-		//}
-		//length := len(q) / 2
-		//q = q[:length]
-		responseURL := "https://" + r.Host + r.URL.String()
+		b, err := io.ReadAll(r.Body)
+		// обрабатываем ошибку
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		//length := len(b) / 2
+		//UnicStr = b[:length]
+		responseURL := "https://" + r.Host + r.URL.String() + string(b)
 		w.Write([]byte(responseURL))
 		fmt.Fprint(w)
 	// если методом GET
