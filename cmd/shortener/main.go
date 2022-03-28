@@ -14,15 +14,16 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusCreated)
-		q := r.URL.Query().Get("query")
-		if q == "" {
-			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
-			return
-		}
-		length := len(q) / 2
-		q = q[:length]
-		w.Write([]byte("q"))
-		fmt.Fprint(w, q)
+		//q := r.URL.Query().Get("query")
+		//if q == "" {
+		//	http.Error(w, "The query parameter is missing", http.StatusBadRequest)
+		//	return
+		//}
+		//length := len(q) / 2
+		//q = q[:length]
+		responseURL := "https://" + r.Host + r.URL.String()
+		w.Write([]byte(responseURL))
+		fmt.Fprint(w)
 	// если методом GET
 	case "GET":
 		id, err := strconv.Atoi(r.URL.Query().Get("id"))
