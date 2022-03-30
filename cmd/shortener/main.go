@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"net/url"
 	"strings"
 )
 
@@ -26,10 +25,10 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		//fmt.Println(string(b))
 		//fmt.Println("r.Body", string(b))
-		u, err := url.Parse(string(b))
-		if err != nil {
-			panic(err)
-		}
+		//u, err := url.Parse(string(b))
+		//if err != nil {
+		//	panic(err)
+		//}
 		//fmt.Println(u)
 		//fmt.Println("Path:", u.Path)
 		//fmt.Println("len(Path):", len(u.Path))
@@ -37,7 +36,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		// Генерируем ключ
 		mKey := randomString(len(b) / 4)
 		// По ключу помещаем значение localhost map.
-		m[mKey] = u.Path
+		m[mKey] = string(b)
 		// Генерируем ответ
 		responseURL := "http://" + r.Host + r.URL.String() + mKey
 		//fmt.Println(responseURL)
@@ -57,13 +56,13 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// достаем из map оригинальный URL
-		origURL, exists := m[q]
-		if exists == false {
-			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
-			return
-		}
-		// origURL := m[q]
-		// fmt.Println("origURL ", origURL)
+		//origURL, exists := m[q]
+		//if exists {
+		//	http.Error(w, "The query parameter is missing", http.StatusBadRequest)
+		//	return
+		//}
+		origURL := m[q]
+		fmt.Println("65 origURL ", origURL)
 		// устанавливаем в заголовке оригинальный URL
 		w.Header().Set("Location", origURL)
 		// устанавливаем статус-код 307
