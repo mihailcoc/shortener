@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 var m = make(map[string]string)
@@ -17,8 +18,6 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	// если методом POST
 	case "POST":
-		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		w.WriteHeader(http.StatusCreated)
 		b, err := io.ReadAll(r.Body)
 		// обрабатываем ошибку
 		if err != nil {
@@ -42,18 +41,24 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		// Генерируем ответ
 		responseURL := "http://" + r.Host + r.URL.String() + mKey
 		//fmt.Println(responseURL)
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		//w.Header().Set("Location", responseURL)
+		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(responseURL))
 		//fmt.Fprint(w)
 	// если методом GET
 	case "GET":
 		// извлекаем фрагмент id из URL запроса GET /{id}
-		q := r.URL.Path
+		//qq := r.URL.Path
+		q := strings.TrimPrefix(r.URL.Path, "/")
+		// fmt.Println("q", q)
 		if q == "" {
 			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
 			return
 		}
 		// достаем из map оригинальный URL
 		origURL := m[q]
+		// fmt.Println("origURL ", origURL)
 		// устанавливаем в заголовке оригинальный URL
 		w.Header().Set("Location", origURL)
 		// устанавливаем статус-код 307
