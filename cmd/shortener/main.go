@@ -9,10 +9,10 @@ import (
 	"net/url"
 )
 
-//var m map[string]string
 var m = make(map[string]string)
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
+	// m := make(map[string]string)
 
 	switch r.Method {
 	// если методом POST
