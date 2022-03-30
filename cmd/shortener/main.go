@@ -35,7 +35,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		//fmt.Println("len(Path):", len(u.Path))
 		//fmt.Println("randomString", randomString(len(u.Path)/4))
 		// Генерируем ключ
-		mKey := randomString(len(u.Path) / 4)
+		mKey := randomString(len(b) / 4)
 		// По ключу помещаем значение localhost map.
 		m[mKey] = u.Path
 		// Генерируем ответ
@@ -57,7 +57,12 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// достаем из map оригинальный URL
-		origURL := m[q]
+		origURL, exists := m[q]
+		if exists == false {
+			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
+			return
+		}
+		// origURL := m[q]
 		// fmt.Println("origURL ", origURL)
 		// устанавливаем в заголовке оригинальный URL
 		w.Header().Set("Location", origURL)
