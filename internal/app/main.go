@@ -14,7 +14,7 @@ import (
 
 func main() {
 	// адрес сервиса (как его писать, расскажем в следующем уроке)
-	endpoint := "http://localhost:8080/"
+	endpoint := "http://localhost:8000/"
 	// контейнер данных для запроса
 	data := url.Values{}
 	// приглашение в консоли
