@@ -46,7 +46,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	// если методом GET
 	case "GET":
 		// извлекаем фрагмент id из URL запроса GET /{id}
-		q := r.URL.Query().Get("id")
+		q := r.URL.Path
 		if q == "" {
 			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
 			return
