@@ -46,14 +46,13 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	// если методом GET
 	case "GET":
 		// извлекаем фрагмент id из URL запроса GET /{id}
-		id := "id"
-		q := r.URL.Query().Get(id)
+		q := r.URL.Query().Get("id")
 		if q == "" {
 			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
 			return
 		}
 		// достаем из map оригинальный URL
-		origURL := m["q"]
+		origURL := m[q]
 		// устанавливаем в заголовке оригинальный URL
 		w.Header().Set("Location", origURL)
 		// устанавливаем статус-код 307
