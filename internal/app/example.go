@@ -51,8 +51,17 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
 			return
 		}
+		//intid, err := strconv.Atoi(q)
+		//if err != nil || intid < 1 {
+		//	http.NotFound(w, r)
+		//	return
+		//}
+
+		// fmt.Println("id", intid)
+		// конвертируем короткий URL в строку
+		//id := strconv.Itoa(intid)
 		// достаем из map оригинальный URL
-		origURL := m["q"]
+		origURL := m[q]
 		// устанавливаем в заголовке оригинальный URL
 		w.Header().Set("Location", origURL)
 		// устанавливаем статус-код 307
