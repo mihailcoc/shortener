@@ -80,6 +80,6 @@ func randomString(len int) string {
 
 func main() {
 	http.HandleFunc("/", viewHandler)
-	err := http.ListenAndServe("localhost:8000", nil)
+	err := http.ListenAndServe("localhost:8080", nil)
 	log.Fatal(err)
 }
