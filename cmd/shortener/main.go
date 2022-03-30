@@ -35,26 +35,26 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		//fmt.Println("Path:", u.Path)
 		//fmt.Println("len(Path):", len(u.Path))
 		//fmt.Println("randomString", randomString(len(u.Path)/4))
-		//Генерируем ключ
-		m_key := randomString(len(u.Path) / 4)
-		//По ключу помещаем значение localhost map.
-		m[m_key] = u.Path
-		//Генерируем ответ
-		responseURL := "http://" + r.Host + r.URL.String() + m_key
-
-		fmt.Println(responseURL)
+		// Генерируем ключ
+		mKey := randomString(len(u.Path) / 4)
+		// По ключу помещаем значение localhost map.
+		m[mKey] = u.Path
+		// Генерируем ответ
+		responseURL := "http://" + r.Host + r.URL.String() + mKey
+		//fmt.Println(responseURL)
 		w.Write([]byte(responseURL))
 		//fmt.Fprint(w)
 	// если методом GET
 	case "GET":
-		id, err := strconv.Atoi(r.URL.Query().Get("id"))
-		if err != nil || id < 1 {
+		intid, err := strconv.Atoi(r.URL.Query().Get("id"))
+		if err != nil || intid < 1 {
 			http.NotFound(w, r)
 			return
 		}
 		// устанавливаем в заголовке оригинальный URL
-		fmt.Println("id", id)
-		origURL := m[string(id)]
+		// fmt.Println("id", intid)
+		id := strconv.Itoa(intid)
+		origURL := m[id]
 		w.Header().Set("Location", origURL)
 		// устанавливаем статус-код 307
 		w.WriteHeader(http.StatusTemporaryRedirect)
