@@ -7,7 +7,6 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
-	"strconv"
 )
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
@@ -46,15 +45,24 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		//fmt.Fprint(w)
 	// если методом GET
 	case "GET":
-		intid, err := strconv.Atoi(r.URL.Query().Get("id"))
-		if err != nil || intid < 1 {
-			http.NotFound(w, r)
+		// извлекаем фрагмент id из URL запроса GET /{id}
+		q := r.URL.Query().Get("id")
+		if q == "" {
+			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
 			return
 		}
-		// устанавливаем в заголовке оригинальный URL
+		//intid, err := strconv.Atoi(q)
+		//if err != nil || intid < 1 {
+		//	http.NotFound(w, r)
+		//	return
+		//}
+
 		// fmt.Println("id", intid)
-		id := strconv.Itoa(intid)
-		origURL := m[id]
+		// конвертируем короткий URL в строку
+		//id := strconv.Itoa(intid)
+		// достаем из map оригинальный URL
+		origURL := m[q]
+		// устанавливаем в заголовке оригинальный URL
 		w.Header().Set("Location", origURL)
 		// устанавливаем статус-код 307
 		w.WriteHeader(http.StatusTemporaryRedirect)
