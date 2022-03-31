@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 )
-
+sscx
 func main() {
 	// адрес сервиса (как его писать, расскажем в следующем уроке)
 	endpoint := "http://localhost:8080/"
