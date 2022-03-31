@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -35,6 +36,10 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		//fmt.Println("randomString", randomString(len(u.Path)/4))
 		// Генерируем ключ
 		mKey := randomString(len(b) / 4)
+		// По ключу проверяем наличие в map.
+		if intid, ok := strconv.Atoi(m[mKey]); ok != nil {
+			fmt.Println("Значение в map уже задано:", strconv.Itoa(intid))
+		}
 		// По ключу помещаем значение localhost map.
 		m[mKey] = string(b)
 		// Генерируем ответ
