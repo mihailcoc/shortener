@@ -2,7 +2,11 @@ package testing
 
 import (
 	"cmd/shortener/main.go/viewHandler"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -58,4 +62,55 @@ func Test_viewHandler(t *testing.T) {
 			}
 		})
 	}
+}
+
+func testRequest(t *testing.T, ts *httptest.Server, method, path string) (*http.Response, string) {
+	req, err := http.NewRequest(method, ts.URL+path, nil)
+	require.NoError(t, err)
+
+	resp, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	require.NoError(t, err)
+
+	defer resp.Body.Close()
+
+	return resp, string(respBody)
+}
+
+func randomInt(min, max int) int {
+	return min + rand.Intn(max-min)
+}
+
+func randomString(len int) string {
+	bytes := make([]byte, len)
+	for i := 0; i < len; i++ {
+		bytes[i] = byte(randomInt(97, 122))
+	}
+	return string(bytes)
+}
+
+func TestRouter(t *testing.T) {
+	r := NewRouter()
+	ts := httptest.NewServer(r)
+	defer ts.Close()
+
+	resp, body := testRequest(t, ts, "GET", "/")
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	assert.Equal(t, "", body)
+
+	b, err := io.ReadAll(r.Body)
+	// обрабатываем ошибку
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	mKey := randomString(len(b) / 4)
+	responseURL := "http://" + r.Host + r.URL.String() + mKey
+
+	resp, body = testRequest(t, ts, "POST", "/")
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, responseURL, body)
+
 }

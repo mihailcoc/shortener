@@ -3,37 +3,26 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 var m = make(map[string]string)
 
-func viewHandler(w http.ResponseWriter, r *http.Request) {
-	// m := make(map[string]string)
-
-	switch r.Method {
-	// если методом POST
-	case "POST":
-		b, err := io.ReadAll(r.Body)
+func setupRouter() *gin.Engine {
+	r := gin.Default()
+	r.POST("/", func(c *gin.Context) {
+		// если методом POST
+		b, err := io.ReadAll(c.Request.Body)
 		// обрабатываем ошибку
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(c.Writer, err.Error(), 500)
 			return
 		}
-		//fmt.Println(string(b))
-		//fmt.Println("r.Body", string(b))
-		//u, err := url.Parse(string(b))
-		//if err != nil {
-		//	panic(err)
-		//}
-		//fmt.Println(u)
-		//fmt.Println("Path:", u.Path)
-		//fmt.Println("len(Path):", len(u.Path))
-		//fmt.Println("randomString", randomString(len(u.Path)/4))
 		// Генерируем ключ
 		mKey := randomString(len(b) / 4)
 		// По ключу проверяем наличие в map.
@@ -43,21 +32,21 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		// По ключу помещаем значение localhost map.
 		m[mKey] = string(b)
 		// Генерируем ответ
-		responseURL := "http://" + r.Host + r.URL.String() + mKey
+		responseURL := "http://" + c.Request.Host + c.Request.URL.String() + mKey
 		//fmt.Println(responseURL)
-		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		c.Writer.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		//w.Header().Set("Location", responseURL)
-		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte(responseURL))
+		c.Writer.WriteHeader(http.StatusCreated)
+		c.Writer.Write([]byte(responseURL))
 		//fmt.Fprint(w)
+	})
 	// если методом GET
-	case "GET":
+	r.GET("/", func(c *gin.Context) {
 		// извлекаем фрагмент id из URL запроса GET /{id}
-		//qq := r.URL.Path
-		q := strings.TrimPrefix(r.URL.Path, "/")
+		q := strings.TrimPrefix(c.Request.URL.Path, "/")
 		// fmt.Println("q", q)
 		if q == "" {
-			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
+			http.Error(c.Writer, "The query parameter is missing", http.StatusBadRequest)
 			return
 		}
 		// достаем из map оригинальный URL
@@ -67,17 +56,15 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		//	return
 		//}
 		origURL := m[q]
-		fmt.Println("65 origURL ", origURL)
+		fmt.Println("origURL ", origURL)
 		// устанавливаем в заголовке оригинальный URL
-		w.Header().Set("Location", origURL)
+		c.Writer.Header().Set("Location", origURL)
 		// устанавливаем статус-код 307
-		w.WriteHeader(http.StatusTemporaryRedirect)
+		c.Writer.WriteHeader(http.StatusTemporaryRedirect)
 		// отдаем редирект на собственный url и код 307
-		fmt.Fprint(w)
-	default:
-		http.Error(w, "Only GET and POST requests are allowed!", http.StatusMethodNotAllowed)
-
-	}
+		// fmt.Fprint(c.Writer)
+	})
+	return r
 }
 
 func randomInt(min, max int) int {
@@ -93,7 +80,7 @@ func randomString(len int) string {
 }
 
 func main() {
-	http.HandleFunc("/", viewHandler)
-	err := http.ListenAndServe("localhost:8080", nil)
-	log.Fatal(err)
+	r := setupRouter()
+	// Listen and Server in 0.0.0.0:8080
+	r.Run(":8080")
 }
