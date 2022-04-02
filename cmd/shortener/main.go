@@ -5,7 +5,6 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -26,11 +25,16 @@ func viewHandler() *gin.Engine {
 		// Генерируем ключ
 		mKey := randomString(len(b) / 4)
 		// По ключу проверяем наличие в map.
-		if intid, ok := strconv.Atoi(m[mKey]); ok != nil {
-			fmt.Println("Значение в map не задано:intid", strconv.Itoa(intid))
+		_, keyIsInMap := m[mKey]
+		if !keyIsInMap {
+			fmt.Println("key not in map")
 		}
+		//if intid, ok := strconv.Atoi(m[mKey]); ok != nil {
+		//	fmt.Println("Значение в map не задано:intid", strconv.Itoa(intid))
+		//}
 		// По ключу помещаем значение localhost map.
 		m[mKey] = string(b)
+		fmt.Println("m", m)
 		// Генерируем ответ
 		responseURL := "http://" + c.Request.Host + c.Request.URL.String() + mKey
 		fmt.Println("responseURL", responseURL)
@@ -42,25 +46,29 @@ func viewHandler() *gin.Engine {
 		fmt.Println("c.Writer.Header()", c.Writer.Header())
 	})
 	// если методом GET
-	r.GET("/", func(c *gin.Context) {
-		// извлекаем фрагмент id из URL запроса GET /{id}
-		fmt.Println("*gin.Context", c)
-		q := strings.TrimPrefix(c.Request.URL.Path, "/")
-		fmt.Println("q", q)
-		if q == "" {
-			http.Error(c.Writer, "The query parameter is missing", http.StatusBadRequest)
-			return
-		}
-		// достаем из map оригинальный URL
-		origURL := m[q]
-		fmt.Println("origURL ", origURL)
-		// устанавливаем в заголовке оригинальный URL
-		c.Writer.Header().Set("Location", origURL)
-		// устанавливаем статус-код 307
-		c.Writer.WriteHeader(http.StatusTemporaryRedirect)
-		// отдаем редирект на собственный url и код 307
-		fmt.Fprint(c.Writer)
-	})
+
+	for _, name := range m {
+		fmt.Println("m", m)
+		r.GET(""+name, func(c *gin.Context) {
+			// извлекаем фрагмент id из URL запроса GET /{id}
+			fmt.Println("*gin.Context", c)
+			q := strings.TrimPrefix(c.Request.URL.Path, "/")
+			fmt.Println("q", q)
+			if q == "" {
+				http.Error(c.Writer, "The query parameter is missing", http.StatusBadRequest)
+				return
+			}
+			// достаем из map оригинальный URL
+			origURL := m[q]
+			fmt.Println("origURL ", origURL)
+			// устанавливаем в заголовке оригинальный URL
+			c.Writer.Header().Set("Location", origURL)
+			// устанавливаем статус-код 307
+			c.Writer.WriteHeader(http.StatusTemporaryRedirect)
+			// отдаем редирект на собственный url и код 307
+			fmt.Fprint(c.Writer)
+		})
+	}
 	return r
 }
 
