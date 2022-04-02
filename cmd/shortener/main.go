@@ -27,34 +27,31 @@ func viewHandler() *gin.Engine {
 		mKey := randomString(len(b) / 4)
 		// По ключу проверяем наличие в map.
 		if intid, ok := strconv.Atoi(m[mKey]); ok != nil {
-			fmt.Println("Значение в map уже задано:", strconv.Itoa(intid))
+			fmt.Println("Значение в map не задано:intid", strconv.Itoa(intid))
 		}
 		// По ключу помещаем значение localhost map.
 		m[mKey] = string(b)
 		// Генерируем ответ
 		responseURL := "http://" + c.Request.Host + c.Request.URL.String() + mKey
-		//fmt.Println(responseURL)
+		fmt.Println("responseURL", responseURL)
 		c.Writer.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		//w.Header().Set("Location", responseURL)
+		c.Writer.Header().Set("Location", responseURL)
 		c.Writer.WriteHeader(http.StatusCreated)
 		c.Writer.Write([]byte(responseURL))
-		//fmt.Fprint(w)
+		fmt.Println("c.Writer", c.Writer)
+		fmt.Println("c.Writer.Header()", c.Writer.Header())
 	})
 	// если методом GET
 	r.GET("/", func(c *gin.Context) {
 		// извлекаем фрагмент id из URL запроса GET /{id}
+		fmt.Println("*gin.Context", c)
 		q := strings.TrimPrefix(c.Request.URL.Path, "/")
-		// fmt.Println("q", q)
+		fmt.Println("q", q)
 		if q == "" {
 			http.Error(c.Writer, "The query parameter is missing", http.StatusBadRequest)
 			return
 		}
 		// достаем из map оригинальный URL
-		//origURL, exists := m[q]
-		//if exists {
-		//	http.Error(w, "The query parameter is missing", http.StatusBadRequest)
-		//	return
-		//}
 		origURL := m[q]
 		fmt.Println("origURL ", origURL)
 		// устанавливаем в заголовке оригинальный URL
@@ -62,7 +59,7 @@ func viewHandler() *gin.Engine {
 		// устанавливаем статус-код 307
 		c.Writer.WriteHeader(http.StatusTemporaryRedirect)
 		// отдаем редирект на собственный url и код 307
-		// fmt.Fprint(c.Writer)
+		fmt.Fprint(c.Writer)
 	})
 	return r
 }
