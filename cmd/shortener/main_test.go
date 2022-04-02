@@ -1,24 +1,24 @@
 package main
 
 import (
-	"net/http"
+	"reflect"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Test_viewHandler(t *testing.T) {
-	type args struct {
-		w http.ResponseWriter
-		r *http.Request
-	}
 	tests := []struct {
 		name string
-		args args
+		want *gin.Engine
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			viewHandler(tt.args.w, tt.args.r)
+			if got := viewHandler(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("viewHandler() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
