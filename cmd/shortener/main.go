@@ -13,7 +13,7 @@ import (
 
 var m = make(map[string]string)
 
-func setupRouter() *gin.Engine {
+func viewHandler() *gin.Engine {
 	r := gin.Default()
 	r.POST("/", func(c *gin.Context) {
 		// если методом POST
@@ -80,7 +80,7 @@ func randomString(len int) string {
 }
 
 func main() {
-	r := setupRouter()
+	r := viewHandler()
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
 }
