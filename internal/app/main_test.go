@@ -1,7 +1,8 @@
 package testing
 
 import (
-	"cmd/shortener/main.go/viewHandler"
+	"cmd/shortener/main.go/handlerGet"
+	"cmd/shortener/main.go/handlerPost"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
