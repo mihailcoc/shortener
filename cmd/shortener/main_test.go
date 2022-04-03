@@ -1,4 +1,4 @@
-package testing
+package main
 
 import (
 	"cmd/shortener/main.go/handlerGet"
