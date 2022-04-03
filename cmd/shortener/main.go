@@ -5,71 +5,48 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-var m = make(map[string]string)
+var urls = make(map[string]string)
 
-func viewHandler() *gin.Engine {
-	r := gin.Default()
-	r.POST("/", func(c *gin.Context) {
-		// если методом POST
-		b, err := io.ReadAll(c.Request.Body)
-		// обрабатываем ошибку
-		if err != nil {
-			http.Error(c.Writer, err.Error(), 500)
-			return
-		}
-		// Генерируем ключ
-		mKey := randomString(len(b) / 4)
-		// По ключу проверяем наличие в map.
-		_, keyIsInMap := m[mKey]
-		if !keyIsInMap {
-			fmt.Println("key not in map")
-		}
-		//if intid, ok := strconv.Atoi(m[mKey]); ok != nil {
-		//	fmt.Println("Значение в map не задано:intid", strconv.Itoa(intid))
-		//}
-		// По ключу помещаем значение localhost map.
-		m[mKey] = string(b)
-		fmt.Println("m", m)
-		// Генерируем ответ
-		responseURL := "http://" + c.Request.Host + c.Request.URL.String() + mKey
-		fmt.Println("responseURL", responseURL)
-		c.Writer.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		c.Writer.Header().Set("Location", responseURL)
-		c.Writer.WriteHeader(http.StatusCreated)
-		c.Writer.Write([]byte(responseURL))
-		fmt.Println("c.Writer", c.Writer)
-		fmt.Println("c.Writer.Header()", c.Writer.Header())
-	})
-	// если методом GET
+const (
+	addr    = "localhost:8080"
+	scheme  = "http"
+	baseURL = scheme + "://" + addr
+)
 
-	for _, name := range m {
-		fmt.Println("m", m)
-		r.GET(""+name, func(c *gin.Context) {
-			// извлекаем фрагмент id из URL запроса GET /{id}
-			fmt.Println("*gin.Context", c)
-			q := strings.TrimPrefix(c.Request.URL.Path, "/")
-			fmt.Println("q", q)
-			if q == "" {
-				http.Error(c.Writer, "The query parameter is missing", http.StatusBadRequest)
-				return
-			}
-			// достаем из map оригинальный URL
-			origURL := m[q]
-			fmt.Println("origURL ", origURL)
-			// устанавливаем в заголовке оригинальный URL
-			c.Writer.Header().Set("Location", origURL)
-			// устанавливаем статус-код 307
-			c.Writer.WriteHeader(http.StatusTemporaryRedirect)
-			// отдаем редирект на собственный url и код 307
-			fmt.Fprint(c.Writer)
-		})
+func main() {
+	server := gin.Default()
+	server.GET("/:key", handlerGet)
+	server.POST("/", handlerPost)
+	server.Run(addr)
+}
+
+func handlerGet(g *gin.Context) {
+	key := g.Param("key")
+	if url, ok := urls[key]; ok {
+		g.Redirect(http.StatusTemporaryRedirect, url)
+		return
+	} else {
+		g.String(http.StatusNotFound, "url not found")
+		return
 	}
-	return r
+}
+
+func handlerPost(g *gin.Context) {
+	body, err := io.ReadAll(g.Request.Body)
+	if err != nil {
+		g.String(http.StatusBadRequest, "bad request")
+		return
+	}
+	mKey := randomString(len(body) / 4)
+
+	urls[mKey] = string(body)
+
+	response := fmt.Sprintf("%s/%s", baseURL, mKey)
+	g.String(http.StatusCreated, response)
 }
 
 func randomInt(min, max int) int {
@@ -82,10 +59,4 @@ func randomString(len int) string {
 		bytes[i] = byte(randomInt(97, 122))
 	}
 	return string(bytes)
-}
-
-func main() {
-	r := viewHandler()
-	// Listen and Server in 0.0.0.0:8080
-	r.Run(":8080")
 }
