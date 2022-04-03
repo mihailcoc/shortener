@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var urls = make(map[string]string)
+var m = make(map[string]string)
 
 const (
 	addr    = "localhost:8080"
@@ -24,29 +24,42 @@ func main() {
 	server.Run(addr)
 }
 
-func handlerGet(g *gin.Context) {
-	key := g.Param("key")
-	if url, ok := urls[key]; ok {
-		g.Redirect(http.StatusTemporaryRedirect, url)
+// если методом GET
+func handlerGet(c *gin.Context) {
+	// извлекаем фрагмент id из URL запроса GET /{id}
+	key := c.Param("key")
+	if url, ok := m[key]; ok {
+		c.Redirect(http.StatusTemporaryRedirect, url)
 		return
 	} else {
-		g.String(http.StatusNotFound, "url not found")
+		c.String(http.StatusNotFound, "url not found")
 		return
 	}
 }
 
-func handlerPost(g *gin.Context) {
-	body, err := io.ReadAll(g.Request.Body)
+// если методом POST
+func handlerPost(c *gin.Context) {
+	b, err := io.ReadAll(c.Request.Body)
+	// обрабатываем ошибку
 	if err != nil {
-		g.String(http.StatusBadRequest, "bad request")
+		c.String(http.StatusBadRequest, "bad request")
 		return
 	}
-	mKey := randomString(len(body) / 4)
+	// Генерируем ключ
+	mKey := randomString(len(b) / 4)
+	// По ключу проверяем наличие в map.
+	_, keyIsInMap := m[mKey]
+	if !keyIsInMap {
+		fmt.Println("key not in map")
+	}
 
-	urls[mKey] = string(body)
+	m[mKey] = string(b)
+	// fmt.Println("m", m)
 
-	response := fmt.Sprintf("%s/%s", baseURL, mKey)
-	g.String(http.StatusCreated, response)
+	responseURL := fmt.Sprintf("%s/%s", baseURL, mKey)
+	//fmt.Println("responseURL", responseURL)
+	c.String(http.StatusCreated, responseURL)
+	// fmt.Println("c.Writer.Header()", c.Writer.Header())
 }
 
 func randomInt(min, max int) int {
