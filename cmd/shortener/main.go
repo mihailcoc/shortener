@@ -6,12 +6,14 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
 var m = make(map[string]string)
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
+	// m := make(map[string]string)
 
 	switch r.Method {
 	// если методом POST
@@ -24,6 +26,10 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		// Генерируем ключ
 		mKey := randomString(len(b) / 4)
+		// По ключу проверяем наличие в map.
+		if intid, ok := strconv.Atoi(m[mKey]); ok != nil {
+			fmt.Println("Значение в map уже задано:", strconv.Itoa(intid))
+		}
 		// По ключу помещаем значение localhost map.
 		m[mKey] = string(b)
 		// Генерируем ответ
@@ -33,11 +39,12 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		//w.Header().Set("Location", responseURL)
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(responseURL))
-		//fmt.Fprint(w)
 	// если методом GET
 	case "GET":
 		// извлекаем фрагмент id из URL запроса GET /{id}
+		//qq := r.URL.Path
 		q := strings.TrimPrefix(r.URL.Path, "/")
+		// fmt.Println("q", q)
 		if q == "" {
 			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
 			return
