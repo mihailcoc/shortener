@@ -1,14 +1,14 @@
 package main
 
 import (
-	"net/http"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
-func Test_viewHandler(t *testing.T) {
+func Test_handlerGet(t *testing.T) {
 	type args struct {
-		w http.ResponseWriter
-		r *http.Request
+		g *gin.Context
 	}
 	tests := []struct {
 		name string
@@ -18,7 +18,24 @@ func Test_viewHandler(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			viewHandler(tt.args.w, tt.args.r)
+			handlerGet(tt.args.g)
+		})
+	}
+}
+
+func Test_handlerPost(t *testing.T) {
+	type args struct {
+		g *gin.Context
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlerPost(tt.args.g)
 		})
 	}
 }

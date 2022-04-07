@@ -3,65 +3,51 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"math/rand"
 	"net/http"
-	"strconv"
-	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
-var m = make(map[string]string)
+var urls = make(map[string]string)
 
-func viewHandler(w http.ResponseWriter, r *http.Request) {
-	// m := make(map[string]string)
+const (
+	addr    = "localhost:8080"
+	scheme  = "http"
+	baseURL = scheme + "://" + addr
+)
 
-	switch r.Method {
-	// если методом POST
-	case "POST":
-		b, err := io.ReadAll(r.Body)
-		// обрабатываем ошибку
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-			return
-		}
-		// Генерируем ключ
-		mKey := randomString(len(b) / 4)
-		// По ключу проверяем наличие в map.
-		if intid, ok := strconv.Atoi(m[mKey]); ok != nil {
-			fmt.Println("Значение в map уже задано:", strconv.Itoa(intid))
-		}
-		// По ключу помещаем значение localhost map.
-		m[mKey] = string(b)
-		// Генерируем ответ
-		responseURL := "http://" + r.Host + r.URL.String() + mKey
-		//fmt.Println(responseURL)
-		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		//w.Header().Set("Location", responseURL)
-		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte(responseURL))
-	// если методом GET
-	case "GET":
-		// извлекаем фрагмент id из URL запроса GET /{id}
-		//qq := r.URL.Path
-		q := strings.TrimPrefix(r.URL.Path, "/")
-		// fmt.Println("q", q)
-		if q == "" {
-			http.Error(w, "The query parameter is missing", http.StatusBadRequest)
-			return
-		}
-		// достаем из map оригинальный URL
-		origURL := m[q]
-		fmt.Println("65 origURL ", origURL)
-		// устанавливаем в заголовке оригинальный URL
-		w.Header().Set("Location", origURL)
-		// устанавливаем статус-код 307
-		w.WriteHeader(http.StatusTemporaryRedirect)
-		// отдаем редирект на собственный url и код 307
-		fmt.Fprint(w)
-	default:
-		http.Error(w, "Only GET and POST requests are allowed!", http.StatusMethodNotAllowed)
+func main() {
+	server := gin.Default()
+	server.GET("/:key", handlerGet)
+	server.POST("/", handlerPost)
+	server.Run(addr)
+}
 
+func handlerGet(g *gin.Context) {
+	key := g.Param("key")
+	if url, ok := urls[key]; ok {
+		g.Redirect(http.StatusTemporaryRedirect, url)
+		return
+	} else {
+		g.String(http.StatusNotFound, "url not found")
+		return
 	}
+}
+
+func handlerPost(g *gin.Context) {
+	body, err := io.ReadAll(g.Request.Body)
+	if err != nil {
+		g.String(http.StatusBadRequest, "bad request")
+		return
+	}
+	// По ключу помещаем значение localhost map.
+	mKey := randomString(len(body) / 4)
+
+	urls[mKey] = string(body)
+
+	response := fmt.Sprintf("%s/%s", baseURL, mKey)
+	g.String(http.StatusCreated, response)
 }
 
 func randomInt(min, max int) int {
@@ -74,10 +60,4 @@ func randomString(len int) string {
 		bytes[i] = byte(randomInt(97, 122))
 	}
 	return string(bytes)
-}
-
-func main() {
-	http.HandleFunc("/", viewHandler)
-	err := http.ListenAndServe("localhost:8080", nil)
-	log.Fatal(err)
 }
