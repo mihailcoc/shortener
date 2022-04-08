@@ -48,7 +48,7 @@ func Test_handlerGet(t *testing.T) {
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем хендлер
-			h := http.HandlerFunc(handlerGet)
+			h := gin.HandlerFunc(handlerGet)
 			// запускаем сервер
 			h.ServeHTTP(w, request)
 			res := w.Result()
@@ -103,7 +103,7 @@ func Test_handlerPost(t *testing.T) {
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем хендлер
-			h := http.HandlerFunc(handlerPost)
+			h := gin.HandlerFunc(handlerPost)
 			// запускаем сервер
 			h.ServeHTTP(w, request)
 			res := w.Result()
