@@ -11,6 +11,12 @@ import (
 	"testing"
 )
 
+type want struct {
+	code        int
+	response    string
+	contentType string
+}
+
 func Test_handlerGet(t *testing.T) {
 	type args struct {
 		g *gin.Context
