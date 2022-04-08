@@ -21,7 +21,8 @@ func Test_handlerGet(t *testing.T) {
 	type args struct {
 		g *gin.Context
 	}
-	tests := []struct {
+	g := handlerGet
+	var tests = []struct {
 		name string
 		args args
 		want interface{}
@@ -29,6 +30,9 @@ func Test_handlerGet(t *testing.T) {
 		// TODO: Add test cases.
 		{
 			name: "positive test #1",
+			args: args{
+				g * gin.Context,
+			},
 			want: want{
 				code:        307,
 				response:    `{"status":"redirect"}`,
