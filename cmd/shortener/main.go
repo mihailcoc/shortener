@@ -6,7 +6,7 @@ import (
 
 var urls = make(map[string]string)
 
-const (
+var (
 	addr    = "localhost:8080"
 	scheme  = "http"
 	baseURL = scheme + "://" + addr
