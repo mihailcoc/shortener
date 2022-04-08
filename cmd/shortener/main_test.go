@@ -19,9 +19,10 @@ type want struct {
 
 func Test_handlerGet(t *testing.T) {
 	type args struct {
-		g *gin.Context
+		t *testing.T
 	}
-	var tests = []struct {
+	g := handlerGet
+	tests := []struct {
 		name string
 		args args
 		want interface{}
@@ -30,7 +31,7 @@ func Test_handlerGet(t *testing.T) {
 		{
 			name: "positive test #1",
 			args: args{
-				gin.Context,
+				g * gin.Context,
 			},
 			want: want{
 				code:        307,
