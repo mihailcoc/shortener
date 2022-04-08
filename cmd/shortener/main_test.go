@@ -25,7 +25,7 @@ func Test_handlerGet(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want interface{}
+		want want
 	}{
 		// TODO: Add test cases.
 		{
