@@ -18,6 +18,7 @@ func Test_handlerGet(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
+		want interface{}
 	}{
 		// TODO: Add test cases.
 		{
@@ -72,6 +73,7 @@ func Test_handlerPost(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
+		want interface{}
 	}{
 		{
 			// TODO: Add test cases.
