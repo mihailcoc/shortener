@@ -11,13 +11,12 @@ import (
 	"testing"
 )
 
-type want struct {
-	code        int
-	response    string
-	contentType string
-}
-
 func Test_handlerGet(t *testing.T) {
+	type want struct {
+		code        int
+		response    string
+		contentType string
+	}
 	type args struct {
 		t *testing.T
 	}
@@ -31,7 +30,7 @@ func Test_handlerGet(t *testing.T) {
 		{
 			name: "positive test #1",
 			args: args{
-				g * gin.Context,
+				*gin.Context,
 			},
 			want: want{
 				code:        307,
