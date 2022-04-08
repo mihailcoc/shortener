@@ -21,7 +21,6 @@ func Test_handlerGet(t *testing.T) {
 	type args struct {
 		g *gin.Context
 	}
-	g := handlerGet
 	var tests = []struct {
 		name string
 		args args
@@ -31,7 +30,7 @@ func Test_handlerGet(t *testing.T) {
 		{
 			name: "positive test #1",
 			args: args{
-				g * gin.Context,
+				gin.Context,
 			},
 			want: want{
 				code:        307,
