@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"main/cmd/shortener/handler"
 )
 
 var urls = make(map[string]string)
@@ -14,7 +15,7 @@ var (
 
 func main() {
 	server := gin.Default()
-	server.GET("/:key", handlerGet)
-	server.POST("/", handlerPost)
+	server.GET("/:key", handler.handlerGet)
+	server.POST("/", handler.handlerPost)
 	server.Run(addr)
 }
