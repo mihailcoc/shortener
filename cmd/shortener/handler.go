@@ -24,10 +24,10 @@ func handlerPost(g *gin.Context) {
 		return
 	}
 	// По ключу помещаем значение localhost map.
-	mKey := main.service.randomString(len(body) / 4)
+	mKey := randomString(len(body) / 4)
 
 	urls[mKey] = string(body)
 
-	response := fmt.Sprintf("%s/%s", main.baseURL, mKey)
+	response := fmt.Sprintf("%s/%s", baseURL, mKey)
 	g.String(http.StatusCreated, response)
 }
