@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"io"
 	"io/ioutil"
-	"main/cmd/shortener/handler"
+	"main/cmd/handler"
 	"net/http"
 	"net/http/httptest"
 	"testing"
