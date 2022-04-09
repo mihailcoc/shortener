@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"io"
 	"io/ioutil"
-	"main/cmd/handler"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -45,13 +44,13 @@ func Test_handlerGet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			handler.handlerGet(tt.args)
+			handlerGet(tt.args)
 			request := httptest.NewRequest(http.MethodGet, "/status", nil)
 
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем хендлер
-			h := gin.HandlerFunc(handler.handlerGet)
+			h := gin.HandlerFunc(handlerGet)
 			// запускаем сервер
 			h.ServeHTTP(w, request)
 			res := w.Result()
@@ -100,13 +99,13 @@ func Test_handlerPost(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			main.handlerPost(tt.args.g)
+			handlerPost(tt.args.g)
 			request := httptest.NewRequest(http.MethodPost, "/status", nil)
 
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем хендлер
-			h := gin.HandlerFunc(main.handlerPost)
+			h := gin.HandlerFunc(handlerPost)
 			// запускаем сервер
 			h.ServeHTTP(w, request)
 			res := w.Result()

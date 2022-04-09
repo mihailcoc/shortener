@@ -14,8 +14,8 @@ func main() {
 	server := gin.Default()
 	server.GET(
 		"/:key",
-		handler.handlerGet,
+		handlerGet,
 	)
-	server.POST("/", handler.handlerPost)
+	server.POST("/", handlerPost)
 	server.Run(addr)
 }
