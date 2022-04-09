@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -164,14 +165,15 @@ func TestRouter(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 	assert.Equal(t, "", body)
 
-	b, err := io.ReadAll(r.Body)
+	b, err := io.ReadAll(resp.Body)
 	// обрабатываем ошибку
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 	mKey := randomString(len(b) / 4)
-	responseURL := "http://" + r.Host + r.URL.String() + mKey
+	responseURL := fmt.Sprintf("%s/%s", baseURL, mKey)
+	//responseURL := "http://" + r.Host + r.URL.String() + mKey
 
 	resp, body = testRequest(t, ts, "POST", "/")
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
