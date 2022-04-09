@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"github.com/gin-gonic/gin"
@@ -12,19 +12,14 @@ import (
 	"testing"
 )
 
-var (
-	w      = httptest.NewRecorder()
-	ctx, _ = gin.CreateTestContext(w)
-)
-
 func Test_handlerGet(t *testing.T) {
-	type args struct {
-		g *gin.Context
-	}
 	type want struct {
 		code        int
 		response    string
 		contentType string
+	}
+	type args struct {
+		t *testing.T
 	}
 
 	tests := []struct {
@@ -35,7 +30,9 @@ func Test_handlerGet(t *testing.T) {
 		// TODO: Add test cases.
 		{
 			name: "positive test #1",
-			// args:{}
+			args: args{
+				*gin.Context,
+			},
 			want: want{
 				code:        307,
 				response:    `{"status":"redirect"}`,
