@@ -24,7 +24,7 @@ func handlerPost(g *gin.Context) {
 		return
 	}
 	// По ключу помещаем значение localhost map.
-	mKey := service.randomString(len(body) / 4)
+	mKey := main.service.randomString(len(body) / 4)
 
 	urls[mKey] = string(body)
 
