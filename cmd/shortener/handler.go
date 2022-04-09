@@ -7,9 +7,11 @@ import (
 	"net/http"
 )
 
+var urls = make(map[string]string)
+
 func handlerGet(g *gin.Context) {
 	key := g.Param("key")
-	if url, ok := main.urls[key]; ok {
+	if url, ok := urls[key]; ok {
 		g.Redirect(http.StatusTemporaryRedirect, url)
 		return
 	}
@@ -22,9 +24,9 @@ func handlerPost(g *gin.Context) {
 		return
 	}
 	// По ключу помещаем значение localhost map.
-	mKey := main.service.randomString(len(body) / 4)
+	mKey := service.randomString(len(body) / 4)
 
-	main.urls[mKey] = string(body)
+	urls[mKey] = string(body)
 
 	response := fmt.Sprintf("%s/%s", main.baseURL, mKey)
 	g.String(http.StatusCreated, response)

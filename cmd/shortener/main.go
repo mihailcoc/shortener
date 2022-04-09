@@ -4,8 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var urls = make(map[string]string)
-
 var (
 	addr    = "localhost:8080"
 	scheme  = "http"
@@ -16,8 +14,8 @@ func main() {
 	server := gin.Default()
 	server.GET(
 		"/:key",
-		main.handler.handlerGet,
+		handler.handlerGet,
 	)
-	server.POST("/", main.handler.handlerPost)
+	server.POST("/", handler.handlerPost)
 	server.Run(addr)
 }
