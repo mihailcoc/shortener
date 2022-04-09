@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	w      = httptest.NewRecorder()
-	ctx, _ = gin.CreateTestContext(w)
+	w           = httptest.NewRecorder()
+	ctx, engine = gin.CreateTestContext(w)
 )
 
 func Test_handlerGet(t *testing.T) {
@@ -44,15 +44,15 @@ func Test_handlerGet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			handlerGet(tt.args)
+			//handlerGet(tt.args)
 			request := httptest.NewRequest(http.MethodGet, "/status", nil)
 
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем хендлер
-			h := gin.HandlerFunc(handlerGet)
+			// h := gin.HandlerFunc(handlerGet)
 			// запускаем сервер
-			h.ServeHTTP(w, request)
+			engine.ServeHTTP(w, request)
 			res := w.Result()
 
 			// проверяем код ответа
@@ -113,7 +113,7 @@ func Test_handlerPost(t *testing.T) {
 			// определяем хендлер
 			h := gin.HandlerFunc(handlerPost)
 			// запускаем сервер
-			h.ServeHTTP(w, request)
+			engine.ServeHTTP(w, request)
 			res := w.Result()
 
 			// проверяем код ответа
