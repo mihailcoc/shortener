@@ -82,10 +82,16 @@ func Test_handlerPost(t *testing.T) {
 	type args struct {
 		g *gin.Context
 	}
+	type want struct {
+		code        int
+		response    string
+		contentType string
+	}
+
 	tests := []struct {
 		name string
 		args args
-		want interface{}
+		want want
 	}{
 		{
 			// TODO: Add test cases.
@@ -163,7 +169,7 @@ func TestRouter(t *testing.T) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	mKey := main.randomString(len(b) / 4)
+	mKey := randomString(len(b) / 4)
 	responseURL := "http://" + r.Host + r.URL.String() + mKey
 
 	resp, body = testRequest(t, ts, "POST", "/")
