@@ -105,13 +105,13 @@ func Test_handlerPost(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			handlerPost(tt.args.g)
+			// handlerPost(tt.args.g)
 			request := httptest.NewRequest(http.MethodPost, "/status", nil)
 
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем хендлер
-			h := gin.HandlerFunc(handlerPost)
+			// h := gin.HandlerFunc(handlerPost)
 			// запускаем сервер
 			engine.ServeHTTP(w, request)
 			res := w.Result()
@@ -155,7 +155,8 @@ func testRequest(t *testing.T, ts *httptest.Server, method, path string) (*http.
 }
 
 func TestRouter(t *testing.T) {
-	r := NewRouter()
+	//r := engine.ServeHTTP()
+	r := gin.Default()
 	ts := httptest.NewServer(r)
 	defer ts.Close()
 
