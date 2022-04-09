@@ -1,10 +1,9 @@
-package handler
+package main
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
-	"main/cmd/shortener"
 	"net/http"
 )
 
@@ -23,7 +22,7 @@ func handlerPost(g *gin.Context) {
 		return
 	}
 	// По ключу помещаем значение localhost map.
-	mKey := main.randomString(len(body) / 4)
+	mKey := main.service.randomString(len(body) / 4)
 
 	main.urls[mKey] = string(body)
 
