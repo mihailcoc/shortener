@@ -11,7 +11,7 @@ import (
 )
 
 type Body struct {
-	Url string
+	URL string
 }
 
 var urls = make(map[string]string)
@@ -39,7 +39,7 @@ func handlerPost(g *gin.Context) {
 	g.String(http.StatusCreated, response)
 }
 
-func handlerPostApi(g *gin.Context) {
+func handlerPostAPI(g *gin.Context) {
 	body, err := io.ReadAll(g.Request.Body)
 	if err != nil {
 		g.String(http.StatusBadRequest, "bad request")

@@ -159,9 +159,10 @@ func TestRouter(t *testing.T) {
 	//r := engine.ServeHTTP()
 	r := gin.Default()
 	ts := httptest.NewServer(r)
-	defer ts.Close()
+	// defer ts.Close()
 
 	resp, body := testRequest(t, ts, "GET", "/")
+	defer ts.Close()
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 	assert.Equal(t, "", body)
 
