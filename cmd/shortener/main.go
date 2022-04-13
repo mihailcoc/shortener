@@ -18,5 +18,6 @@ func main() {
 	)
 	server.POST("/", handlerPost)
 	server.POST("/api/shorten", handlerPostAPI)
+	server.GET("/api/shorten", handlerGetAPI)
 	server.Run(addr)
 }

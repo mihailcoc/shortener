@@ -39,6 +39,14 @@ func handlerPost(g *gin.Context) {
 	g.String(http.StatusCreated, response)
 }
 
+func handlerGetAPI(g *gin.Context) {
+	key := g.Param("key")
+	if url, ok := urls[key]; ok {
+		g.Redirect(http.StatusTemporaryRedirect, url)
+		return
+	}
+}
+
 func handlerPostAPI(g *gin.Context) {
 	body, err := io.ReadAll(g.Request.Body)
 	if err != nil {
