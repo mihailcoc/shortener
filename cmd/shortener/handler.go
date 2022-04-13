@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
+	"log"
 	"net/http"
+	"os"
 )
 
 type Body struct {
@@ -53,6 +55,16 @@ func handlerPostApi(g *gin.Context) {
 	urls[mKey] = string(body)
 
 	response := fmt.Sprintf("%s/%s", baseURL, mKey)
-	responseApi, _ := json.Marshal(response)
-	g.String(http.StatusCreated, responseApi)
+	// responseApi, _ := json.Marshal(response)
+	//g.String(http.StatusCreated, response)
+	jsonresponse, err := json.Marshal(response)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Fprintf(os.Stdout, "%s", jsonresponse)
+	g.JSON(200, jsonresponse) // jsonPessoal is still a []byte !!
+	if err != nil {
+		return
+	}
+
 }
