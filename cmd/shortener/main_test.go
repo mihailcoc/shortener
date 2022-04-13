@@ -46,7 +46,7 @@ func Test_handlerGet(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			//handlerGet(tt.args)
-			ctx.Request, _ = httptest.NewRequest(http.MethodGet, "/", nil)
+			ctx.Request = httptest.NewRequest(http.MethodGet, "/", nil)
 
 			// создаём новый Recorder
 			//w := httptest.NewRecorder()
@@ -72,8 +72,8 @@ func Test_handlerGet(t *testing.T) {
 			}
 			ctx.Writer.WriteHeaderNow()
 			// заголовок ответа
-			if w.Header.Get("Content-Type") != tt.want.contentType {
-				t.Errorf("Expected Content-Type %s, got %s", tt.want.contentType, w.Header.Get("Content-Type"))
+			if w.Header().Get("Content-Type") != tt.want.contentType {
+				t.Errorf("Expected Content-Type %s, got %s", tt.want.contentType, w.Header().Get("Content-Type"))
 			}
 		})
 	}
