@@ -54,15 +54,15 @@ func Test_handlerGet(t *testing.T) {
 			// h := gin.HandlerFunc(handlerGet)
 			// запускаем сервер
 			engine.ServeHTTP(w, ctx.Request)
-			// res := w.Result()
+			res := w.Result()
 
 			// проверяем код ответа
-			if w.Code != tt.want.code {
+			if res.StatusCode != tt.want.code {
 				t.Errorf("Expected status code %d, got %d", tt.want.code, w.Code)
 			}
 
 			// получаем и проверяем тело запроса
-			// defer res.Body.Close()
+			defer res.Body.Close()
 			resBody, err := io.ReadAll(w.Body)
 			if err != nil {
 				t.Fatal(err)
@@ -70,7 +70,7 @@ func Test_handlerGet(t *testing.T) {
 			if string(resBody) != tt.want.response {
 				t.Errorf("Expected body %s, got %s", tt.want.response, w.Body.String())
 			}
-			ctx.Writer.WriteHeaderNow()
+
 			// заголовок ответа
 			if w.Header().Get("Content-Type") != tt.want.contentType {
 				t.Errorf("Expected Content-Type %s, got %s", tt.want.contentType, w.Header().Get("Content-Type"))
