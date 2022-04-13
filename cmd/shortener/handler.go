@@ -39,7 +39,7 @@ func handlerPostApi(g *gin.Context) {
 		g.String(http.StatusBadRequest, "bad request")
 		return
 	}
-	value := string
+	value := Tree{}
 	if err := json.Unmarshal([]byte(body), &value); err != nil {
 		panic(err)
 	}
