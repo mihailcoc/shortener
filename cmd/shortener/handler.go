@@ -22,7 +22,7 @@ func handlerGet(g *gin.Context) {
 		g.Redirect(http.StatusTemporaryRedirect, url)
 		return
 	}{
-		g.String(http.StatusNotFound, "url not found")
+		g.String(http.StatusBadRequest, "")
 		return
 	}
 }
