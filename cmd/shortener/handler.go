@@ -21,7 +21,7 @@ func handlerGet(g *gin.Context) {
 	if url, ok := urls[key]; ok {
 		g.Redirect(http.StatusTemporaryRedirect, url)
 		return
-	}{
+	} else {
 		g.String(http.StatusBadRequest, "")
 		return
 	}
