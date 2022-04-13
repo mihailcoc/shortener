@@ -42,7 +42,7 @@ func handlerPost(g *gin.Context) {
 func handlerGetAPI(g *gin.Context) {
 	key := g.Param("key")
 	if url, ok := urls[key]; ok {
-		g.Redirect(http.StatusTemporaryRedirect, url)
+		g.IndentedJSON(http.StatusTemporaryRedirect, url)
 		return
 	}
 }
