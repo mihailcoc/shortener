@@ -107,7 +107,7 @@ func Test_handlerPost(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// handlerPost(tt.args.g)
-			request := httptest.NewRequest(http.MethodPost, "/status", nil)
+			request := httptest.NewRequest(http.MethodPost, "/", nil)
 
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
