@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -35,24 +34,4 @@ func handlerPost(g *gin.Context) {
 
 	response := fmt.Sprintf("%s/%s", baseURL, mKey)
 	g.String(http.StatusCreated, response)
-}
-
-func handlerPostApi(g *gin.Context) {
-	body, err := io.ReadAll(g.Request.Body)
-	if err != nil {
-		g.String(http.StatusBadRequest, "bad request")
-		return
-	}
-	value := Body{}
-	if err := json.Unmarshal([]byte(body), &value); err != nil {
-		panic(err)
-	}
-	// По ключу помещаем значение localhost map.
-	mKey := randomString(len(body) / 4)
-
-	urls[mKey] = string(body)
-
-	response := fmt.Sprintf("%s/%s", baseURL, mKey)
-	responseApi, _ := json.Marshal(response)
-	g.String(http.StatusCreated, responseApi)
 }
