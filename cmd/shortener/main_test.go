@@ -46,34 +46,34 @@ func Test_handlerGet(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			//handlerGet(tt.args)
-			request := httptest.NewRequest(http.MethodGet, "/status", nil)
+			ctx.Request, _ = httptest.NewRequest(http.MethodGet, "/", nil)
 
 			// создаём новый Recorder
-			w := httptest.NewRecorder()
+			//w := httptest.NewRecorder()
 			// определяем хендлер
 			// h := gin.HandlerFunc(handlerGet)
 			// запускаем сервер
-			engine.ServeHTTP(w, request)
-			res := w.Result()
+			engine.ServeHTTP(w, ctx.Request)
+			// res := w.Result()
 
 			// проверяем код ответа
-			if res.StatusCode != tt.want.code {
+			if w.Code != tt.want.code {
 				t.Errorf("Expected status code %d, got %d", tt.want.code, w.Code)
 			}
 
 			// получаем и проверяем тело запроса
-			defer res.Body.Close()
-			resBody, err := io.ReadAll(res.Body)
+			// defer res.Body.Close()
+			resBody, err := io.ReadAll(w.Body)
 			if err != nil {
 				t.Fatal(err)
 			}
 			if string(resBody) != tt.want.response {
 				t.Errorf("Expected body %s, got %s", tt.want.response, w.Body.String())
 			}
-
+			ctx.Writer.WriteHeaderNow()
 			// заголовок ответа
-			if res.Header.Get("Content-Type") != tt.want.contentType {
-				t.Errorf("Expected Content-Type %s, got %s", tt.want.contentType, res.Header.Get("Content-Type"))
+			if w.Header.Get("Content-Type") != tt.want.contentType {
+				t.Errorf("Expected Content-Type %s, got %s", tt.want.contentType, w.Header.Get("Content-Type"))
 			}
 		})
 	}
