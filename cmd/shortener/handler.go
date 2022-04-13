@@ -62,7 +62,7 @@ func handlerPostAPI(g *gin.Context) {
 		log.Fatal(err)
 	}
 	fmt.Fprintf(os.Stdout, "%s", jsonresponse)
-	g.JSON(200, jsonresponse) // jsonPessoal is still a []byte !!
+	g.JSON(201, jsonresponse) // jsonPessoal is still a []byte !!
 	if err != nil {
 		return
 	}
