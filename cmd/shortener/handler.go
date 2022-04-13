@@ -21,6 +21,9 @@ func handlerGet(g *gin.Context) {
 	if url, ok := urls[key]; ok {
 		g.Redirect(http.StatusTemporaryRedirect, url)
 		return
+	}{
+		g.String(http.StatusNotFound, "url not found")
+		return
 	}
 }
 
@@ -63,14 +66,12 @@ func handlerPostAPI(g *gin.Context) {
 	urls[mKey] = string(body)
 
 	response := fmt.Sprintf("%s/%s", baseURL, mKey)
-	// responseApi, _ := json.Marshal(response)
-	//g.String(http.StatusCreated, response)
 	jsonresponse, err := json.Marshal(response)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Fprintf(os.Stdout, "%s", jsonresponse)
-	g.JSON(201, jsonresponse) // jsonPessoal is still a []byte !!
+	g.JSON(201, jsonresponse) // jsonresponse is still a []byte !!
 	if err != nil {
 		return
 	}
