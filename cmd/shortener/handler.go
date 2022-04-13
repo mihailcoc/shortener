@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+type Body struct {
+	Url string
+}
+
 var urls = make(map[string]string)
 
 func handlerGet(g *gin.Context) {
@@ -39,7 +43,7 @@ func handlerPostApi(g *gin.Context) {
 		g.String(http.StatusBadRequest, "bad request")
 		return
 	}
-	value := Tree{}
+	value := Body{}
 	if err := json.Unmarshal([]byte(body), &value); err != nil {
 		panic(err)
 	}
