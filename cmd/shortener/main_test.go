@@ -156,7 +156,6 @@ func testRequest(t *testing.T, ts *httptest.Server, method, path string) (*http.
 }
 
 func TestRouter(t *testing.T) {
-	//r := engine.ServeHTTP()
 	r := gin.Default()
 	ts := httptest.NewServer(r)
 	defer ts.Close()
@@ -177,7 +176,7 @@ func TestRouter(t *testing.T) {
 	//responseURL := "http://" + r.Host + r.URL.String() + mKey
 
 	resp, body = testRequest(t, ts, "POST", "/")
-	defer resp.Body.Close()
+	defer t.Close()
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, responseURL, body)
 
