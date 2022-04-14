@@ -52,7 +52,7 @@ func handlerPostAPI(g *gin.Context) {
 	}
 	value := Body{}
 	if err := json.Unmarshal([]byte(body), &value); err != nil {
-		panic(err)
+		panic(err) // log fatal
 	}
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(body) / 4)
