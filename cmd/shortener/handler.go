@@ -39,10 +39,10 @@ func handlerPost(g *gin.Context) {
 	g.String(http.StatusCreated, response)
 }
 
-func handlerPostAPI(w http.ResponseWriter, g *gin.Context) {
+func handlerPostAPI(g *gin.Context) {
 	var v Body
 	if err := json.NewDecoder(g.Request.Body).Decode(&v); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		// http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	body, err := io.ReadAll(g.Request.Body)
