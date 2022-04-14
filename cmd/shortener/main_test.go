@@ -162,6 +162,7 @@ func TestRouter(t *testing.T) {
 	defer ts.Close()
 
 	resp, body := testRequest(t, ts, "GET", "/")
+	defer resp.Body.Close()
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 	assert.Equal(t, "", body)
 
@@ -176,6 +177,7 @@ func TestRouter(t *testing.T) {
 	//responseURL := "http://" + r.Host + r.URL.String() + mKey
 
 	resp, body = testRequest(t, ts, "POST", "/")
+	defer resp.Body.Close()
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, responseURL, body)
 

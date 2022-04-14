@@ -4,6 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Config struct {
+	SERVER_ADDRESS string `env:"localhost:8080"`
+	BASE_URL       string `env:"localhost:8080"`
+}
+
 var (
 	addr    = "localhost:8080"
 	scheme  = "http"
