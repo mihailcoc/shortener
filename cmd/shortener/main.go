@@ -5,8 +5,8 @@ import (
 )
 
 type Config struct {
-	SERVER_ADDRESS string `env:"localhost:8080"`
-	BASE_URL       string `env:"localhost:8080"`
+	Server_Address string `env:"localhost:8080"`
+	Base_Url       string `env:"localhost:8080"`
 }
 
 var (
@@ -22,6 +22,6 @@ func main() {
 		handlerGet,
 	)
 	server.POST("/", handlerPost)
-	server.POST("/api/shorten", handlerPostApi)
+	server.POST("/api/shorten", handlerPostAPI)
 	server.Run(addr)
 }
