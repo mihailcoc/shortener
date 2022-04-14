@@ -46,7 +46,7 @@ func Test_handlerGet(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			//handlerGet(tt.args)
-			ctx.Request = httptest.NewRequest(http.MethodGet, "/", nil)
+			ctx.Request = httptest.NewRequest(http.MethodGet, "/:key", nil)
 
 			// создаём новый Recorder
 			//w := httptest.NewRecorder()
