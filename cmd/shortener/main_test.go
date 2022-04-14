@@ -46,14 +46,14 @@ func Test_handlerGet(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			//handlerGet(tt.args)
-			request := httptest.NewRequest(http.MethodGet, "/status", nil)
+			ctx.Request = httptest.NewRequest(http.MethodGet, "/", nil)
 
 			// создаём новый Recorder
-			w := httptest.NewRecorder()
+			//w := httptest.NewRecorder()
 			// определяем хендлер
 			// h := gin.HandlerFunc(handlerGet)
 			// запускаем сервер
-			engine.ServeHTTP(w, request)
+			engine.ServeHTTP(w, ctx.Request)
 			res := w.Result()
 
 			// проверяем код ответа
@@ -63,7 +63,7 @@ func Test_handlerGet(t *testing.T) {
 
 			// получаем и проверяем тело запроса
 			defer res.Body.Close()
-			resBody, err := io.ReadAll(res.Body)
+			resBody, err := io.ReadAll(w.Body)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -72,8 +72,8 @@ func Test_handlerGet(t *testing.T) {
 			}
 
 			// заголовок ответа
-			if res.Header.Get("Content-Type") != tt.want.contentType {
-				t.Errorf("Expected Content-Type %s, got %s", tt.want.contentType, res.Header.Get("Content-Type"))
+			if w.Header().Get("Content-Type") != tt.want.contentType {
+				t.Errorf("Expected Content-Type %s, got %s", tt.want.contentType, w.Header().Get("Content-Type"))
 			}
 		})
 	}
@@ -107,7 +107,7 @@ func Test_handlerPost(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// handlerPost(tt.args.g)
-			request := httptest.NewRequest(http.MethodPost, "/status", nil)
+			request := httptest.NewRequest(http.MethodPost, "/", nil)
 
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
