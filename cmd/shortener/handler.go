@@ -9,7 +9,7 @@ import (
 )
 
 type Body struct {
-	URL string
+	URL string `json:"str_value"`
 }
 
 var (
@@ -54,7 +54,10 @@ func handlerPostAPI(g *gin.Context) {
 	mKey := randomString(len(body) / 4)
 
 	urls[mKey] = string(body)
-
 	response := fmt.Sprintf("%s/%s", baseURL, mKey)
-	g.String(http.StatusCreated, response)
+	responsebyte, err := json.Marshal(response)
+	if err != nil {
+		panic(err)
+	}
+	g.String(http.StatusCreated, string(responsebyte))
 }
