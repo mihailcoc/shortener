@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -11,7 +12,9 @@ type Body struct {
 	URL string
 }
 
-var urls = make(map[string]string)
+var (
+	urls = make(map[string]string)
+)
 
 func handlerGet(g *gin.Context) {
 	key := g.Param("key")
@@ -36,7 +39,12 @@ func handlerPost(g *gin.Context) {
 	g.String(http.StatusCreated, response)
 }
 
-func handlerPostAPI(g *gin.Context) {
+func handlerPostAPI(w http.ResponseWriter, g *gin.Context) {
+	var v Body
+	if err := json.NewDecoder(g.Request.Body).Decode(&v); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	body, err := io.ReadAll(g.Request.Body)
 	if err != nil {
 		g.String(http.StatusBadRequest, "bad request")
