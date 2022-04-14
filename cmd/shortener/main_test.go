@@ -176,7 +176,6 @@ func TestRouter(t *testing.T) {
 	//responseURL := "http://" + r.Host + r.URL.String() + mKey
 
 	resp, body = testRequest(t, ts, "POST", "/")
-	defer t.Close()
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, responseURL, body)
 
