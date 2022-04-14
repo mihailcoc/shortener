@@ -40,15 +40,19 @@ func handlerPost(g *gin.Context) {
 }
 
 func handlerPostAPI(g *gin.Context) {
-	var v Body
-	if err := json.NewDecoder(g.Request.Body).Decode(&v); err != nil {
-		// http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	// var v Body
+	//if err := json.NewDecoder(g.Request.Body).Decode(&v); err != nil {
+	// http.Error(w, err.Error(), http.StatusBadRequest)
+	//	return
+	//}
 	body, err := io.ReadAll(g.Request.Body)
 	if err != nil {
 		g.String(http.StatusBadRequest, "bad request")
 		return
+	}
+	value := Body{}
+	if err := json.Unmarshal([]byte(body), &value); err != nil {
+		panic(err)
 	}
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(body) / 4)
