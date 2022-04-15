@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	w           = httptest.NewRecorder()
-	ctx, engine = gin.CreateTestContext(w)
+	w            = httptest.NewRecorder()
+	resp, engine = gin.CreateTestContext(w)
 )
 
 func Test_handlerGet(t *testing.T) {
@@ -45,15 +45,19 @@ func Test_handlerGet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			handlerGet(tt.args.g)
-			ctx.Request = httptest.NewRequest(http.MethodGet, "/:key", nil)
 
+			req := httptest.NewRequest(http.MethodGet, "/:key", nil)
 			// создаём новый Recorder
-			//w := httptest.NewRecorder()
+			w := httptest.NewRecorder()
 			// определяем хендлер
-			// h := gin.HandlerFunc(handlerGet)
+			h := handlerGet
+			//engine.Use(func(c *gin.Context) {
+			//	c.Set("auth_token", models.AuthToken{})
+			//})
+			engine.GET("/", h)
+			rr := http.ResponseWriter(w)
 			// запускаем сервер
-			engine.ServeHTTP(w, ctx.Request)
+			engine.ServeHTTP(rr, req)
 			res := w.Result()
 
 			// проверяем код ответа
@@ -107,14 +111,14 @@ func Test_handlerPost(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// handlerPost(tt.args.g)
-			request := httptest.NewRequest(http.MethodPost, "/", nil)
+			//request := httptest.NewRequest(http.MethodPost, "/", nil)
 
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем хендлер
-			// h := gin.HandlerFunc(handlerPost)
+			//h := gin.Engine(handlerPost)
 			// запускаем сервер
-			engine.ServeHTTP(w, request)
+			//h.ServeHTTP(w, request)
 			res := w.Result()
 
 			// проверяем код ответа
