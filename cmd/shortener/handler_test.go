@@ -46,7 +46,7 @@ func Test_handlerPost(t *testing.T) {
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем handler
-			engine.GET("/", handlerPost)
+			engine.POST("/", handlerPost)
 			// запускаем сервер
 			engine.ServeHTTP(http.ResponseWriter(httptest.NewRecorder()), req)
 			res := w.Result()
