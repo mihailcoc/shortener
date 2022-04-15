@@ -22,6 +22,7 @@ func handlerGet(g *gin.Context) {
 		g.Redirect(http.StatusTemporaryRedirect, url)
 		return
 	}
+	fmt.Sprintf("25 url", urls[key])
 }
 
 func handlerPost(g *gin.Context) {
