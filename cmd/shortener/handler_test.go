@@ -12,7 +12,7 @@ import (
 var (
 	w            = httptest.NewRecorder()
 	resp, engine = gin.CreateTestContext(w)
-	req_body     = strings.NewReader("http://rqls3b.com/bnclubmjprl")
+	reqbody      = strings.NewReader("http://rqls3b.com/bnclubmjprl")
 )
 
 func Test_handlerPost(t *testing.T) {
@@ -44,7 +44,7 @@ func Test_handlerPost(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// handlerPost(tt.args.g)
 
-			req := httptest.NewRequest(http.MethodPost, "/", req_body)
+			req := httptest.NewRequest(http.MethodPost, "/", reqbody)
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем handler
