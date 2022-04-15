@@ -19,7 +19,7 @@ func main() {
 	server := gin.Default()
 	server.GET(
 		"/:key",
-		handlerGet,
+		handler.handlerGet,
 	)
 	server.GET(
 		"/api/shorten:key",
