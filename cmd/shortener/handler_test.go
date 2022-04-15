@@ -13,6 +13,7 @@ var (
 	w            = httptest.NewRecorder()
 	resp, engine = gin.CreateTestContext(w)
 	reqbody      = strings.NewReader("http://rqls3b.com/bnclubmjprl")
+	key          = string("key")
 )
 
 func Test_handlerPost(t *testing.T) {
@@ -67,7 +68,7 @@ func Test_handlerPost(t *testing.T) {
 			if string(resBody) != tt.want.response {
 				t.Errorf("Expected body %s, got %s", tt.want.response, w.Body.String())
 			}
-
+			key = string(resBody)
 			// заголовок ответа
 			if res.Header.Get("Content-Type") != tt.want.contentType {
 				t.Errorf("Expected Content-Type %s, got %s", tt.want.contentType, res.Header.Get("Content-Type"))
@@ -121,13 +122,14 @@ func Test_handlerGet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
-			req := httptest.NewRequest(http.MethodGet, "/:key", nil)
+			//"key" = key
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
+			w.Header().Set("Location", key)
+			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+			w.WriteHeader(http.StatusTemporaryRedirect)
+			req := httptest.NewRequest(http.MethodGet, "/:key", nil)
 			// определяем handler
-			// h := handlerGet
-
 			engine.GET("/:key", handlerGet)
 			// запускаем сервер
 			engine.ServeHTTP(http.ResponseWriter(w), req)
