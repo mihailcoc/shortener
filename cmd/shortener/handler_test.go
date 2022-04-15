@@ -41,14 +41,14 @@ func Test_handlerPost(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// handlerPost(tt.args.g)
-			//request := httptest.NewRequest(http.MethodPost, "/", nil)
 
+			req := httptest.NewRequest(http.MethodPost, "/", nil)
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем handler
-			//h := gin.Engine(handlerPost)
+			engine.GET("/", handlerPost)
 			// запускаем сервер
-			//h.ServeHTTP(w, request)
+			engine.ServeHTTP(http.ResponseWriter(httptest.NewRecorder()), req)
 			res := w.Result()
 
 			// проверяем код ответа
