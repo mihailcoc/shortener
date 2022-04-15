@@ -34,9 +34,9 @@ func Test_handlerPost(t *testing.T) {
 			// TODO: Add test cases.
 			name: "positive test #1",
 			want: want{
-				code:        200,
-				response:    `https://localhost:8000/gmwjgsa`,
-				contentType: "application/json",
+				code:        201,
+				response:    `http://localhost:8080/gmwjgsa`,
+				contentType: "text/plain; charset=utf-8",
 			},
 		},
 	}
@@ -50,7 +50,7 @@ func Test_handlerPost(t *testing.T) {
 			// определяем handler
 			engine.POST("/", handlerPost)
 			// запускаем сервер
-			engine.ServeHTTP(http.ResponseWriter(httptest.NewRecorder()), req)
+			engine.ServeHTTP(http.ResponseWriter(w), req)
 			res := w.Result()
 
 			// проверяем код ответа
@@ -114,8 +114,8 @@ func Test_handlerGet(t *testing.T) {
 			// args:{}
 			want: want{
 				code:        307,
-				response:    `{"status":"redirect"}`,
-				contentType: "application/json",
+				response:    ``,
+				contentType: "text/plain; charset=utf-8",
 			},
 		},
 	}
@@ -130,7 +130,7 @@ func Test_handlerGet(t *testing.T) {
 
 			engine.GET("/:key", handlerGet)
 			// запускаем сервер
-			engine.ServeHTTP(http.ResponseWriter(httptest.NewRecorder()), req)
+			engine.ServeHTTP(http.ResponseWriter(w), req)
 			res := w.Result()
 
 			// проверяем код ответа
