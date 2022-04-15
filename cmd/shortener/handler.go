@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -15,15 +16,6 @@ type Body struct {
 var (
 	urls = make(map[string]string)
 )
-
-func handlerGet(g *gin.Context) {
-	key := g.Param("key")
-	if url, ok := urls[key]; ok {
-		g.Redirect(http.StatusTemporaryRedirect, url)
-		return
-	}
-	//fmt.Sprintf("25 url", urls[key])
-}
 
 func handlerPost(g *gin.Context) {
 	body, err := io.ReadAll(g.Request.Body)
@@ -62,7 +54,23 @@ func handlerPostAPI(g *gin.Context) {
 	response := fmt.Sprintf("%s/%s", baseURL, mKey)
 	responsebyte, err := json.Marshal(response)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	g.String(http.StatusCreated, string(responsebyte))
+}
+
+func handlerGet(g *gin.Context) {
+	key := g.Param("key")
+	if url, ok := urls[key]; ok {
+		g.Redirect(http.StatusTemporaryRedirect, url)
+		return
+	}
+}
+
+func handlerGetAPI(g *gin.Context) {
+	key := g.Param("key")
+	if url, ok := urls[key]; ok {
+		g.Redirect(http.StatusTemporaryRedirect, url)
+		return
+	}
 }

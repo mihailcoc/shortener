@@ -21,6 +21,10 @@ func main() {
 		"/:key",
 		handlerGet,
 	)
+	server.GET(
+		"/api/shorten:key",
+		handlerGetAPI,
+	)
 	server.POST("/", handlerPost)
 	server.POST("/api/shorten", handlerPostAPI)
 	server.Run(addr)
