@@ -5,12 +5,14 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
 var (
 	w            = httptest.NewRecorder()
 	resp, engine = gin.CreateTestContext(w)
+	req_body     = strings.NewReader("http://rqls3b.com/bnclubmjprl")
 )
 
 func Test_handlerPost(t *testing.T) {
@@ -33,7 +35,7 @@ func Test_handlerPost(t *testing.T) {
 			name: "positive test #1",
 			want: want{
 				code:        200,
-				response:    `{"status":"redirect"}`,
+				response:    `https://localhost:8000/gmwjgsa`,
 				contentType: "application/json",
 			},
 		},
@@ -42,7 +44,7 @@ func Test_handlerPost(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// handlerPost(tt.args.g)
 
-			req := httptest.NewRequest(http.MethodPost, "/", nil)
+			req := httptest.NewRequest(http.MethodPost, "/", req_body)
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// определяем handler
