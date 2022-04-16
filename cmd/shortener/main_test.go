@@ -1,55 +1,47 @@
 package main
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 )
 
-func testRequest(t *testing.T, ts *httptest.Server, method, path string) (*http.Response, string) {
-	req, err := http.NewRequest(method, ts.URL+path, nil)
-	require.NoError(t, err)
+func Test_randomInt(t *testing.T) {
+	type args struct {
+		min int
+		max int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		// TODO: Add test cases.
 
-	resp, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-
-	respBody, err := ioutil.ReadAll(resp.Body)
-	require.NoError(t, err)
-
-	defer resp.Body.Close()
-
-	return resp, string(respBody)
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := randomInt(tt.args.min, tt.args.max); got != tt.want {
+				t.Errorf("randomInt() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
 
-func TestRouter(t *testing.T) {
-	r := gin.Default()
-	ts := httptest.NewServer(r)
-	defer ts.Close()
-
-	resp, body := testRequest(t, ts, "GET", "/")
-	defer resp.Body.Close()
-	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
-	assert.Equal(t, "", body)
-
-	b, err := io.ReadAll(resp.Body)
-	// обрабатываем ошибку
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
+func Test_randomString(t *testing.T) {
+	type args struct {
+		len int
 	}
-	mKey := randomString(len(b) / 4)
-	responseURL := fmt.Sprintf("%s/%s", baseURL, mKey)
-	//responseURL := "http://" + r.Host + r.URL.String() + mKey
-
-	resp, body = testRequest(t, ts, "POST", "/")
-	defer resp.Body.Close()
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, responseURL, body)
-
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := randomString(tt.args.len); got != tt.want {
+				t.Errorf("randomString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
