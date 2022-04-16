@@ -39,27 +39,29 @@ func handlerPostAPI(g *gin.Context) {
 		return
 		//log.Fatal(err)
 	}
-	//reqbody := body
-	//reqbody := strings.NewReader("body")
-	//value := Body{}
-	//if err := json.Unmarshal([]byte(body), &value); err != nil {
-	//	log.Fatal(err)
-	//}
+
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(body) / 4)
 
 	urls[mKey] = string(body)
 	response := fmt.Sprintf("%s/%s", baseURL, mKey)
-	//responsebyte, err := json.Marshal(response)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	g.String(http.StatusCreated, string(response))
+	fmt.Sprintf(response)
 	buf := bytes.NewBuffer([]byte{})
 	encoder := json.NewEncoder(buf)
 	encoder.SetEscapeHTML(false)
-	encoder.Encode(response)
-	fmt.Println(buf.String())
+	//encoder.Encode(v)
+	g.String(http.StatusCreated, string(response))
+	encoder.Encode(g)
+	//v := struct {
+	//	Url string
+	//}{
+	//	Url: "http://mysite.com?id=1234&param=2",
+	//}
+	//buf := bytes.NewBuffer([]byte{})
+	//encoder := json.NewEncoder(buf)
+	//encoder.SetEscapeHTML(false)
+	//encoder.Encode(v)
+	fmt.Println(buf)
 }
 
 func handlerGet(g *gin.Context) {
