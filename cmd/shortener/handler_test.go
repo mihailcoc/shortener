@@ -81,17 +81,61 @@ func Test_handlerPostAPI(t *testing.T) {
 	type args struct {
 		g *gin.Context
 	}
+	type want struct {
+		code        int
+		response    string
+		contentType string
+	}
+
 	tests := []struct {
 		name string
 		args args
+		want want
 	}{
-		// TODO: Add test cases.
+		{
+			// TODO: Add test cases.
+			name: "positive test #3",
+			want: want{
+				code:        201,
+				response:    `http://localhost:8080/gmwjgsa`,
+				contentType: "application/json",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			handlerPostAPI(tt.args.g)
+			// создаём новый Request
+			req := httptest.NewRequest(http.MethodPost, "/api/shorten", reqbody)
+			// создаём новый Recorder
+			w := httptest.NewRecorder()
+			// определяем handler
+			engine.POST("/api/shorten", handlerPostAPI)
+			// запускаем сервер
+			engine.ServeHTTP(http.ResponseWriter(w), req)
+			res := w.Result()
+
+			// проверяем код ответа
+			if res.StatusCode != tt.want.code {
+				t.Errorf("Expected status code %d, got %d", tt.want.code, w.Code)
+			}
+
+			// получаем и проверяем тело запроса
+			defer res.Body.Close()
+			resBody, err := io.ReadAll(res.Body)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if string(resBody) != tt.want.response {
+				t.Errorf("Expected body %s, got %s", tt.want.response, w.Body.String())
+			}
+			key = string(resBody)
+			// заголовок ответа
+			if res.Header.Get("Content-Type") != tt.want.contentType {
+				t.Errorf("Expected Content-Type %s, got %s", tt.want.contentType, res.Header.Get("Content-Type"))
+			}
 		})
 	}
+}	}
 }
 
 func Test_handlerGet(t *testing.T) {
