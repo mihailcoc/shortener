@@ -135,7 +135,6 @@ func Test_handlerPostAPI(t *testing.T) {
 			}
 		})
 	}
-}	}
 }
 
 func Test_handlerGet(t *testing.T) {
