@@ -9,14 +9,6 @@ import (
 	"net/http"
 )
 
-type Body struct {
-	URL string `json:"str_value"`
-}
-
-var (
-	urls = make(map[string]string)
-)
-
 func handlerPost(g *gin.Context) {
 	body, err := io.ReadAll(g.Request.Body)
 	if err != nil {
@@ -45,7 +37,7 @@ func handlerPostAPI(g *gin.Context) {
 	}
 	value := Body{}
 	if err := json.Unmarshal([]byte(body), &value); err != nil {
-		panic(err) // log fatal
+		log.Fatal(err)
 	}
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(body) / 4)
