@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httptest"
 )
 
 func handlerPost(g *gin.Context) {
@@ -25,20 +27,24 @@ func handlerPost(g *gin.Context) {
 }
 
 func handlerPostAPI(g *gin.Context) {
-	// var v Body
-	//if err := json.NewDecoder(g.Request.Body).Decode(&v); err != nil {
-	// http.Error(w, err.Error(), http.StatusBadRequest)
-	//	return
-	//}
-	body, err := io.ReadAll(g.Request.Body)
+	value := Body{}
+	if err := json.NewDecoder(g.Request.Body).Decode(&value); err != nil {
+		http.Error(http.ResponseWriter(httptest.NewRecorder()), err.Error(), http.StatusBadRequest)
+		return
+		//log.Fatal(err)
+	}
+	body, err := ioutil.ReadAll(g.Request.Body)
 	if err != nil {
 		g.String(http.StatusBadRequest, "bad request")
 		return
+		//log.Fatal(err)
 	}
-	value := Body{}
-	if err := json.Unmarshal([]byte(body), &value); err != nil {
-		log.Fatal(err)
-	}
+	//reqbody := body
+	//reqbody := strings.NewReader("body")
+	//value := Body{}
+	//if err := json.Unmarshal([]byte(body), &value); err != nil {
+	//	log.Fatal(err)
+	//}
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(body) / 4)
 
