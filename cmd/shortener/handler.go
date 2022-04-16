@@ -45,7 +45,7 @@ func handlerPostAPI(g *gin.Context) {
 
 	urls[mKey] = string(body)
 	response := fmt.Sprintf("%s/%s", baseURL, mKey)
-	fmt.Sprintf(response)
+	//fmt.Sprintf(response)
 	buf := bytes.NewBuffer([]byte{})
 	encoder := json.NewEncoder(buf)
 	encoder.SetEscapeHTML(false)
