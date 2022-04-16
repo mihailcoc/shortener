@@ -1,12 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/httptest"
 )
@@ -50,11 +50,16 @@ func handlerPostAPI(g *gin.Context) {
 
 	urls[mKey] = string(body)
 	response := fmt.Sprintf("%s/%s", baseURL, mKey)
-	responsebyte, err := json.Marshal(response)
-	if err != nil {
-		log.Fatal(err)
-	}
-	g.String(http.StatusCreated, string(responsebyte))
+	//responsebyte, err := json.Marshal(response)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	g.String(http.StatusCreated, string(response))
+	buf := bytes.NewBuffer([]byte{})
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(false)
+	encoder.Encode(response)
+	fmt.Println(buf.String())
 }
 
 func handlerGet(g *gin.Context) {
