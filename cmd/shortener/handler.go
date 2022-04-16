@@ -9,14 +9,6 @@ import (
 	"net/http"
 )
 
-type Body struct {
-	URL string `json:"str_value"`
-}
-
-var (
-	urls = make(map[string]string)
-)
-
 func handlerPost(g *gin.Context) {
 	body, err := io.ReadAll(g.Request.Body)
 	if err != nil {
