@@ -1,22 +1,24 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io"
-	"io/ioutil"
+	"log"
 	"net/http"
-	"net/http/httptest"
+
+	"github.com/gin-gonic/gin"
 )
+
+type Body struct {
+	URL string `json:"url"`
+}
 
 func handlerPost(g *gin.Context) {
 	body, err := io.ReadAll(g.Request.Body)
 	if err != nil {
-		g.String(http.StatusBadRequest, "bad request")
-		return
+		panic(err)
 	}
+	//log.Printf("Получено тело запроса: %s", body)
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(body) / 4)
 
@@ -27,41 +29,51 @@ func handlerPost(g *gin.Context) {
 }
 
 func handlerPostAPI(g *gin.Context) {
-	value := Body{}
-	if err := json.NewDecoder(g.Request.Body).Decode(&value); err != nil {
-		http.Error(http.ResponseWriter(httptest.NewRecorder()), err.Error(), http.StatusBadRequest)
-		return
-		//log.Fatal(err)
-	}
-	body, err := ioutil.ReadAll(g.Request.Body)
-	if err != nil {
-		g.String(http.StatusBadRequest, "bad request")
-		return
-		//log.Fatal(err)
-	}
 
-	// По ключу помещаем значение localhost map.
-	mKey := randomString(len(body) / 4)
+	switch g.Request.Header.Get("Content-Type") {
+	case "application/json":
+		body, err := io.ReadAll(g.Request.Body)
+		if err != nil {
+			panic(err)
+		}
+		//log.Printf("Получено тело запроса: %s", body)
 
-	urls[mKey] = string(body)
-	response := fmt.Sprintf("%s/%s", baseURL, mKey)
-	//fmt.Sprintf(response)
-	buf := bytes.NewBuffer([]byte{})
-	encoder := json.NewEncoder(buf)
-	encoder.SetEscapeHTML(false)
-	//encoder.Encode(v)
-	g.String(http.StatusCreated, string(response))
-	encoder.Encode(g)
-	//v := struct {
-	//	Url string
-	//}{
-	//	Url: "http://mysite.com?id=1234&param=2",
-	//}
-	//buf := bytes.NewBuffer([]byte{})
-	//encoder := json.NewEncoder(buf)
-	//encoder.SetEscapeHTML(false)
-	//encoder.Encode(v)
-	fmt.Println(buf)
+		// По ключу помещаем значение localhost map.
+		mKey := randomString(len(body) / 4)
+
+		urls[mKey] = string(body)
+		response := fmt.Sprintf("%s/%s", baseURL, mKey)
+		// Respond with JSON
+		g.JSON(http.StatusCreated, gin.H{"result": response})
+	case "application/xml":
+		body, err := io.ReadAll(g.Request.Body)
+		if err != nil {
+			panic(err)
+		}
+		log.Printf("Получено тело запроса: %s", body)
+
+		// По ключу помещаем значение localhost map.
+		mKey := randomString(len(body) / 4)
+
+		urls[mKey] = string(body)
+		response := fmt.Sprintf("%s/%s", baseURL, mKey)
+		// Respond with XML
+		g.XML(http.StatusCreated, gin.H{"result": response})
+	default:
+		body, err := io.ReadAll(g.Request.Body)
+		if err != nil {
+			panic(err)
+		}
+		//log.Printf("Получено тело запроса: %s", body)
+
+		// По ключу помещаем значение localhost map.
+		mKey := randomString(len(body) / 4)
+
+		urls[mKey] = string(body)
+		response := fmt.Sprintf("%s/%s", baseURL, mKey)
+		// Respond with JSON
+		g.JSON(http.StatusCreated, gin.H{"result": response})
+	}
 }
 
 func handlerGet(g *gin.Context) {

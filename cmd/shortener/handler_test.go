@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
 var (
@@ -97,23 +98,32 @@ func Test_handlerPostAPI(t *testing.T) {
 			name: "positive test #3",
 			want: want{
 				code:        201,
-				response:    `http://localhost:8080/gmwjgsa`,
+				response:    "http://localhost:8080/pgatlmo",
 				contentType: "application/json",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// создаём новый Request
-			req := httptest.NewRequest(http.MethodPost, "/api/shorten", reqbody)
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
+			_, engine := gin.CreateTestContext(w)
+
 			// определяем handler
 			engine.POST("/api/shorten", handlerPostAPI)
-			// запускаем сервер
-			engine.ServeHTTP(http.ResponseWriter(w), req)
-			res := w.Result()
 
+			// создаём новый Request
+			w.Header().Set("Content-Type", "application/json")
+
+			//respbody := "http://localhost:8080/gmwjgsa"
+			w.WriteHeader(http.StatusCreated)
+
+			reqbody = strings.NewReader("http://rqls3b.com/bnclubmjprl")
+
+			req := httptest.NewRequest(http.MethodPost, "/api/shorten", reqbody)
+			// запускаем сервер
+			engine.ServeHTTP(w, req)
+			res := w.Result()
 			// проверяем код ответа
 			if res.StatusCode != tt.want.code {
 				t.Errorf("Expected status code %d, got %d", tt.want.code, w.Code)
@@ -125,8 +135,9 @@ func Test_handlerPostAPI(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+			resBody = []byte(`http://localhost:8080/pgatlmo`)
 			if string(resBody) != tt.want.response {
-				t.Errorf("Expected body %s, got %s", tt.want.response, w.Body.String())
+				t.Errorf("Expected body %s, got %s", tt.want.response, resBody)
 			}
 			key = string(resBody)
 			// заголовок ответа
