@@ -86,6 +86,7 @@ func Test_handlerPostAPI(t *testing.T) {
 		code        int
 		response    string
 		contentType string
+		string
 	}
 
 	tests := []struct {
@@ -115,7 +116,6 @@ func Test_handlerPostAPI(t *testing.T) {
 			// создаём новый Request
 			w.Header().Set("Content-Type", "application/json")
 
-			//respbody := "http://localhost:8080/gmwjgsa"
 			w.WriteHeader(http.StatusCreated)
 
 			reqbody = strings.NewReader("http://rqls3b.com/bnclubmjprl")
@@ -135,7 +135,7 @@ func Test_handlerPostAPI(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			resBody = []byte(`http://localhost:8080/pgatlmo`)
+			//resBody = []byte(`http://localhost:8080/pgatlmo`)
 			if string(resBody) != tt.want.response {
 				t.Errorf("Expected body %s, got %s", tt.want.response, resBody)
 			}
