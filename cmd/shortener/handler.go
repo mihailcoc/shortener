@@ -113,11 +113,12 @@ func handlerGet(g *gin.Context) {
 			g.JSON(http.StatusTemporaryRedirect, url)
 			return
 		}
-	case "application/xml":
+	case "application/xml; charset=utf-8":
+		log.Printf("Получен get application/xml")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
-			g.Redirect(http.StatusTemporaryRedirect, url)
+			g.XML(http.StatusTemporaryRedirect, url)
 			return
 		}
 	case "text/plain; charset=utf-8":
@@ -126,6 +127,14 @@ func handlerGet(g *gin.Context) {
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
 			g.Redirect(http.StatusTemporaryRedirect, url)
+			return
+		}
+	case "application/x-yaml; charset=utf-8":
+		log.Printf("Получен get application/x-yaml")
+		key := g.Param("key")
+		if url, ok := urls[key]; ok {
+			g.Header("Location", url)
+			g.YAML(http.StatusTemporaryRedirect, url)
 			return
 		}
 	default:
