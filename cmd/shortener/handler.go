@@ -46,6 +46,7 @@ func handlerPostAPI(g *gin.Context) {
 		urls[mKey] = string(body)
 		response := fmt.Sprintf("%s/%s", baseURL, mKey)
 		// Respond with JSON
+		g.Header("Content-Type", "application/json; charset=utf-8")
 		g.JSON(http.StatusCreated, gin.H{"result": response})
 	case "application/xml":
 		body, err := io.ReadAll(g.Request.Body)
@@ -110,7 +111,7 @@ func handlerGet(g *gin.Context) {
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
-			g.JSON(http.StatusTemporaryRedirect, url)
+			g.JSON(http.StatusTemporaryRedirect, nil)
 			return
 		}
 	case "application/xml; charset=utf-8":
@@ -118,7 +119,7 @@ func handlerGet(g *gin.Context) {
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
-			g.XML(http.StatusTemporaryRedirect, url)
+			g.XML(http.StatusTemporaryRedirect, nil)
 			return
 		}
 	case "text/plain; charset=utf-8":
@@ -134,7 +135,7 @@ func handlerGet(g *gin.Context) {
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
-			g.YAML(http.StatusTemporaryRedirect, url)
+			g.YAML(http.StatusTemporaryRedirect, nil)
 			return
 		}
 	default:
@@ -142,7 +143,7 @@ func handlerGet(g *gin.Context) {
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", strings.TrimSpace(url))
-			g.IndentedJSON(http.StatusTemporaryRedirect, url)
+			g.IndentedJSON(http.StatusTemporaryRedirect, nil)
 			return
 		}
 	}
