@@ -142,7 +142,7 @@ func handlerGet(g *gin.Context) {
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", strings.TrimSpace(url))
-			g.JSON(http.StatusTemporaryRedirect, url)
+			g.Redirect(http.StatusTemporaryRedirect, url)
 			return
 		}
 	}
