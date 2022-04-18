@@ -103,11 +103,10 @@ func handlerPostAPI(g *gin.Context) {
 //}
 
 func handlerGet(g *gin.Context) {
-		key := g.Param("key")
-		if url, ok := urls[key]; ok {
-			g.Header("Location", strings.TrimSpace(url))
-			g.Redirect(http.StatusTemporaryRedirect, url)
-			return
-		}
+	key := g.Param("key")
+	if url, ok := urls[key]; ok {
+		g.Header("Location", strings.TrimSpace(url))
+		g.Redirect(http.StatusTemporaryRedirect, url)
+		return
 	}
 }
