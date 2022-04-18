@@ -85,9 +85,18 @@ func handlerGet(g *gin.Context) {
 }
 
 func handlerGetAPI(g *gin.Context) {
-	key := g.Param("key")
-	if url, ok := urls[key]; ok {
-		g.Redirect(http.StatusTemporaryRedirect, url)
-		return
+	switch g.Request.Header.Get("Content-Type") {
+	case "application/json":
+		key := g.Param("key")
+		if url, ok := urls[key]; ok {
+			g.Redirect(http.StatusTemporaryRedirect, url)
+			return
+		}
+	case "application/xml":
+		key := g.Param("key")
+		if url, ok := urls[key]; ok {
+			g.Redirect(http.StatusTemporaryRedirect, url)
+			return
+		}
 	}
 }
