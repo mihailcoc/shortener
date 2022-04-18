@@ -110,7 +110,7 @@ func handlerGet(g *gin.Context) {
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
-			g.JSON(http.StatusTemporaryRedirect, nil)
+			g.JSON(http.StatusTemporaryRedirect, url)
 			return
 		}
 	case "application/xml":
@@ -133,7 +133,7 @@ func handlerGet(g *gin.Context) {
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", strings.TrimSpace(url))
-			g.JSON(http.StatusTemporaryRedirect, nil)
+			g.JSON(http.StatusTemporaryRedirect, url)
 			return
 		}
 	}
