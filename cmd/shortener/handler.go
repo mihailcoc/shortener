@@ -76,17 +76,19 @@ func handlerPostAPI(g *gin.Context) {
 	}
 }
 
-func handlerGet(g *gin.Context) {
-	key := g.Param("key")
-	if url, ok := urls[key]; ok {
-		g.Redirect(http.StatusTemporaryRedirect, url)
-		return
-	}
-}
+//func handlerGet(g *gin.Context) {
+//	key := g.Param("key")
+//	if url, ok := urls[key]; ok {
+//		g.Redirect(http.StatusTemporaryRedirect, url)
+//		return
+//	}
+//}
 
-func handlerGetAPI(g *gin.Context) {
+func handlerGet(g *gin.Context) {
 	switch g.Request.Header.Get("Content-Type") {
-	case "application/json":
+
+	case "application/json; charset=utf-8":
+		log.Printf("Получен application/json")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
@@ -101,6 +103,7 @@ func handlerGetAPI(g *gin.Context) {
 			return
 		}
 	default:
+		log.Printf("Получен default")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
