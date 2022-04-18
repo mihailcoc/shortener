@@ -103,42 +103,6 @@ func handlerPostAPI(g *gin.Context) {
 //}
 
 func handlerGet(g *gin.Context) {
-	switch g.Request.Header.Get("Content-Type") {
-
-	case "application/json; charset=utf-8":
-		log.Printf("Получен get application/json")
-		key := g.Param("key")
-		if url, ok := urls[key]; ok {
-			g.Header("Location", url)
-			g.JSON(http.StatusTemporaryRedirect, url)
-			return
-		}
-	case "application/xml; charset=utf-8":
-		log.Printf("Получен get application/xml")
-		key := g.Param("key")
-		if url, ok := urls[key]; ok {
-			g.Header("Location", url)
-			g.XML(http.StatusTemporaryRedirect, url)
-			return
-		}
-	case "text/plain; charset=utf-8":
-		log.Printf("Получен get text/plain")
-		key := g.Param("key")
-		if url, ok := urls[key]; ok {
-			g.Header("Location", url)
-			g.Redirect(http.StatusTemporaryRedirect, url)
-			return
-		}
-	case "application/x-yaml; charset=utf-8":
-		log.Printf("Получен get application/x-yaml")
-		key := g.Param("key")
-		if url, ok := urls[key]; ok {
-			g.Header("Location", url)
-			g.YAML(http.StatusTemporaryRedirect, url)
-			return
-		}
-	default:
-		log.Printf("Получен get default")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", strings.TrimSpace(url))
