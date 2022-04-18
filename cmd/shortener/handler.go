@@ -141,7 +141,10 @@ func handlerGet(g *gin.Context) {
 		log.Printf("Получен get default")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
-			g.Header("Location", strings.TrimSpace(url))
+			url = strings.TrimSpace(url)
+			log.Printf("Отдаем url %s", url)
+			g.Header("Location", url)
+			log.Printf("Отдаем url %s", url)
 			g.IndentedJSON(http.StatusTemporaryRedirect, nil)
 			return
 		}
