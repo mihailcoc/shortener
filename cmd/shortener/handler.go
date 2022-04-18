@@ -98,5 +98,11 @@ func handlerGetAPI(g *gin.Context) {
 			g.Redirect(http.StatusTemporaryRedirect, url)
 			return
 		}
+	default:
+		key := g.Param("key")
+		if url, ok := urls[key]; ok {
+			g.Redirect(http.StatusTemporaryRedirect, url)
+			return
+		}
 	}
 }
