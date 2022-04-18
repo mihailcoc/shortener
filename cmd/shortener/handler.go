@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -131,7 +132,7 @@ func handlerGet(g *gin.Context) {
 		log.Printf("Получен get default")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
-			g.Header("Location", url)
+			g.Header("Location", strings.TrimSpace(url))
 			g.JSON(http.StatusTemporaryRedirect, nil)
 			return
 		}
