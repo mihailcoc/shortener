@@ -31,12 +31,13 @@ func handlerPost(g *gin.Context) {
 func handlerPostAPI(g *gin.Context) {
 
 	switch g.Request.Header.Get("Content-Type") {
-	case "application/json":
+	case "application/json; charset=utf-8":
+		log.Printf("Получен post application/json")
 		body, err := io.ReadAll(g.Request.Body)
 		if err != nil {
 			panic(err)
 		}
-		//log.Printf("Получено тело запроса: %s", body)
+		log.Printf("Получено тело запроса: %s", body)
 
 		// По ключу помещаем значение localhost map.
 		mKey := randomString(len(body) / 4)
@@ -60,6 +61,7 @@ func handlerPostAPI(g *gin.Context) {
 		// Respond with XML
 		g.XML(http.StatusCreated, gin.H{"result": response})
 	default:
+		log.Printf("Получен post default")
 		body, err := io.ReadAll(g.Request.Body)
 		if err != nil {
 			panic(err)
@@ -88,7 +90,7 @@ func handlerGet(g *gin.Context) {
 	switch g.Request.Header.Get("Content-Type") {
 
 	case "application/json; charset=utf-8":
-		log.Printf("Получен application/json")
+		log.Printf("Получен get application/json")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
