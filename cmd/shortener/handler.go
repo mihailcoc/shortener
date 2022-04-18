@@ -60,6 +60,21 @@ func handlerPostAPI(g *gin.Context) {
 		response := fmt.Sprintf("%s/%s", baseURL, mKey)
 		// Respond with XML
 		g.XML(http.StatusCreated, gin.H{"result": response})
+	case "text/plain; charset=utf-8":
+		log.Printf("Получен post text/plain")
+		body, err := io.ReadAll(g.Request.Body)
+		if err != nil {
+			panic(err)
+		}
+		log.Printf("Получено тело запроса: %s", body)
+
+		// По ключу помещаем значение localhost map.
+		mKey := randomString(len(body) / 4)
+
+		urls[mKey] = string(body)
+		response := fmt.Sprintf("%s/%s", baseURL, mKey)
+		// Respond with JSON
+		g.JSON(http.StatusCreated, gin.H{"result": response})
 	default:
 		log.Printf("Получен post default")
 		body, err := io.ReadAll(g.Request.Body)
