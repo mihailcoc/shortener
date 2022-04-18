@@ -119,6 +119,14 @@ func handlerGet(g *gin.Context) {
 			g.Redirect(http.StatusTemporaryRedirect, url)
 			return
 		}
+	case "text/plain; charset=utf-8":
+		log.Printf("Получен get text/plain")
+		key := g.Param("key")
+		if url, ok := urls[key]; ok {
+			g.Header("Location", url)
+			g.JSON(307, nil)
+			return
+		}
 	default:
 		header := g.Request.Header.Get("Content-Type")
 		log.Printf("Получен get default %s", header)
