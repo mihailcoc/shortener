@@ -89,19 +89,19 @@ func handlerGetAPI(g *gin.Context) {
 	case "application/json":
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
-			g.Redirect(http.StatusTemporaryRedirect, url)
+			g.JSON(http.StatusTemporaryRedirect, url)
 			return
 		}
 	case "application/xml":
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
-			g.Redirect(http.StatusTemporaryRedirect, url)
+			g.JSON(http.StatusTemporaryRedirect, url)
 			return
 		}
 	default:
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
-			g.Redirect(http.StatusTemporaryRedirect, url)
+			g.JSON(http.StatusTemporaryRedirect, url)
 			return
 		}
 	}
