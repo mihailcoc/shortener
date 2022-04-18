@@ -61,7 +61,7 @@ func handlerPostAPI(g *gin.Context) {
 		response := fmt.Sprintf("%s/%s", baseURL, mKey)
 		// Respond with XML
 		g.XML(http.StatusCreated, gin.H{"result": response})
-	case "text/plain; charset=utf-8":
+	case "text/plain":
 		log.Printf("Получен post text/plain")
 		body, err := io.ReadAll(g.Request.Body)
 		if err != nil {
@@ -105,7 +105,7 @@ func handlerPostAPI(g *gin.Context) {
 func handlerGet(g *gin.Context) {
 	switch g.Request.Header.Get("Content-Type") {
 
-	case "application/json; charset=utf-8":
+	case "application/json":
 		log.Printf("Получен get application/json")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
@@ -113,7 +113,7 @@ func handlerGet(g *gin.Context) {
 			g.JSON(http.StatusTemporaryRedirect, nil)
 			return
 		}
-	case "application/xml; charset=utf-8":
+	case "application/xml":
 		log.Printf("Получен get application/xml")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
@@ -121,7 +121,7 @@ func handlerGet(g *gin.Context) {
 			g.XML(http.StatusTemporaryRedirect, nil)
 			return
 		}
-	case "text/plain; charset=utf-8":
+	case "text/plain":
 		log.Printf("Получен get text/plain")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
@@ -129,7 +129,7 @@ func handlerGet(g *gin.Context) {
 			g.Redirect(http.StatusTemporaryRedirect, url)
 			return
 		}
-	case "application/x-yaml; charset=utf-8":
+	case "application/x-yaml":
 		log.Printf("Получен get application/x-yaml")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
