@@ -105,7 +105,8 @@ func handlerGet(g *gin.Context) {
 			return
 		}
 	default:
-		log.Printf("Получен default")
+		header := g.Request.Header.Get("Content-Type")
+		log.Printf("Получен default %s", header)
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
