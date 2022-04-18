@@ -46,7 +46,7 @@ func handlerPostAPI(g *gin.Context) {
 		urls[mKey] = string(body)
 		response := fmt.Sprintf("%s/%s", baseURL, mKey)
 		// Respond with JSON
-		g.JSON(http.StatusCreated, gin.H{"result": strings.TrimSpace(response)})
+		g.JSON(http.StatusCreated, gin.H{"result": response})
 	case "application/xml":
 		body, err := io.ReadAll(g.Request.Body)
 		if err != nil {
@@ -90,7 +90,7 @@ func handlerPostAPI(g *gin.Context) {
 		urls[mKey] = string(body)
 		response := fmt.Sprintf("%s/%s", baseURL, mKey)
 		// Respond with JSON
-		g.JSON(http.StatusCreated, gin.H{"result": response})
+		g.JSON(http.StatusCreated, gin.H{"result": strings.TrimSpace(response)})
 	}
 }
 
