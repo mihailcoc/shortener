@@ -145,7 +145,7 @@ func handlerGet(g *gin.Context) {
 			url = strings.TrimSpace(url)
 			log.Printf("Отдаем url после strings.TrimSpace %s", url)
 			g.Header("Location", url)
-			g.IndentedJSON(http.StatusTemporaryRedirect, nil)
+			g.Redirect(http.StatusTemporaryRedirect, url)
 			return
 		}
 	}
