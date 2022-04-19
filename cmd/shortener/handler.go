@@ -51,7 +51,9 @@ func handlerPostAPI(g *gin.Context) {
 
 		// парсим JSON и записываем результат в экземпляр структуры
 		err = json.Unmarshal(jsonURL, &jsonBody)
-
+		if err != nil {
+			panic(err)
+		}
 		// По ключу помещаем значение localhost map.
 		mKey := randomString(len(jsonURL) / 4)
 		log.Printf("Получен mKey: %s", mKey)
