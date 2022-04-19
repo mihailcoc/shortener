@@ -10,10 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Body struct {
-	URL string `json:"url"`
-}
-
 func handlerPost(g *gin.Context) {
 	body, err := io.ReadAll(g.Request.Body)
 	if err != nil {
