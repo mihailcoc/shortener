@@ -122,7 +122,7 @@ func handlerGet(g *gin.Context) {
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			g.Header("Location", url)
-			g.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf(url))
+			g.Redirect(http.StatusTemporaryRedirect, url)
 			return
 		}
 	case "application/x-yaml":
@@ -137,11 +137,11 @@ func handlerGet(g *gin.Context) {
 		log.Printf("Получен get default")
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
-			log.Printf("Отдаем url %s", url)
+			log.Printf("Отдаем url %s", string(url))
 
 			g.Header("Content-Type", "text/html; charset=utf-8")
-			g.Header("Location", url)
-			g.Redirect(http.StatusTemporaryRedirect, string(url))
+			g.Header("Location", g.Request.URL.Host)
+			g.Redirect(http.StatusTemporaryRedirect, url)
 			return
 		}
 	}
