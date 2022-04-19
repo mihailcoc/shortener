@@ -138,8 +138,6 @@ func handlerGet(g *gin.Context) {
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			log.Printf("Отдаем url %s", url)
-			url = strings.TrimSpace(url)
-			log.Printf("Отдаем url после strings.TrimSpace %s", url)
 			g.Header("Location", url)
 			g.Redirect(http.StatusTemporaryRedirect, url)
 			return
