@@ -176,7 +176,6 @@ func Test_handlerGet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			//"key" = key
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			w.Header().Set("Location", key)
