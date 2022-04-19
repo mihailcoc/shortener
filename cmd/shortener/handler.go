@@ -140,7 +140,7 @@ func handlerGet(g *gin.Context) {
 			log.Printf("Отдаем url %s", url)
 			g.Header("Content-Type", "text/html; charset=utf-8")
 			g.Header("Location", url)
-			g.Redirect(http.StatusTemporaryRedirect, url)
+			g.Redirect(http.StatusTemporaryRedirect, string(url))
 			return
 		}
 	}
