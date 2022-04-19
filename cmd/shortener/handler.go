@@ -138,6 +138,7 @@ func handlerGet(g *gin.Context) {
 		key := g.Param("key")
 		if url, ok := urls[key]; ok {
 			log.Printf("Отдаем url %s", url)
+			g.Header("Content-Type", "text/html; charset=utf-8")
 			g.Header("Location", url)
 			g.Redirect(http.StatusTemporaryRedirect, url)
 			return
