@@ -6,10 +6,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//type Config struct {
-//	Server_Address string `env:"localhost"`
-//	Base_Url       string `env:"http://localhost:8080"`
-//}
+type Config struct {
+	Server_Address string `env:"localhost:8080"`
+	Base_Url       string `env:"localhost:8080"`
+}
+
+var (
+	Server_Address = "localhost:8080"
+	scheme         = "http"
+	baseURL        = scheme + "://" + Server_Address
+)
 
 const port = ":8080"
 
@@ -20,7 +26,7 @@ func main() {
 	//os.Setenv("Server_Address", "localhost"+port)
 	//os.Setenv("Base_Url", "http:/"+os.Getenv("Server_Address")+"/")
 	srv := http.Server{
-		//Addr:    addr,
+		Addr:    baseURL,
 		Handler: router,
 	}
 
