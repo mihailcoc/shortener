@@ -1,7 +1,11 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/gorilla/mux"
 )
 
 type Config struct {
@@ -10,18 +14,27 @@ type Config struct {
 }
 
 var (
-	addr    = "localhost:8080"
-	scheme  = "http"
-	baseURL = scheme + "://" + addr
+	ServerAddress = "localhost:8080"
+	scheme        = "http"
+	baseURL       = scheme + "://" + ServerAddress
 )
 
+const port = ":8080"
+
 func main() {
-	server := gin.Default()
-	server.GET(
-		"/:key",
-		handlerGet,
-	)
-	server.POST("/", handlerPost)
-	server.POST("/api/shorten", handlerPostAPI)
-	server.Run(addr)
+	// init router
+	router := mux.NewRouter()
+
+	os.Setenv("ServerAddress", "localhost"+port)
+	os.Setenv("baseURL", "http:/"+os.Getenv("ServerAddress")+"/")
+	srv := http.Server{
+		//Addr:    http:/localhost:8080,
+		Handler: router,
+	}
+
+	// router handler / endpoints
+	router.HandleFunc("/", handlerPost).Methods("POST")
+	router.HandleFunc("/:key", handlerGet).Methods("GET")
+	router.HandleFunc("/api/shorten", handlerPostAPI).Methods("POST")
+	log.Fatal(srv.ListenAndServe())
 }

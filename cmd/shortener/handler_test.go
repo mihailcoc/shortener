@@ -6,20 +6,17 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-
-	"github.com/gin-gonic/gin"
 )
 
 var (
-	w            = httptest.NewRecorder()
-	resp, engine = gin.CreateTestContext(w)
-	reqbody      = strings.NewReader("http://rqls3b.com/bnclubmjprl")
-	key          = string("key")
+	reqbody = strings.NewReader("http://rqls3b.com/bnclubmjprl")
+	key     = string("key")
 )
 
 func Test_handlerPost(t *testing.T) {
 	type args struct {
-		g *gin.Context
+		w http.ResponseWriter
+		r *http.Request
 	}
 	type want struct {
 		code        int
@@ -44,22 +41,23 @@ func Test_handlerPost(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// handlerPost(tt.args.g)
-
-			req := httptest.NewRequest(http.MethodPost, "/", reqbody)
+			// определяем handler
+			handlerPost(tt.args.w, tt.args.r)
+			// создаём тело запроса
+			reqbody = strings.NewReader("http://rqls3b.com/bnclubmjprl")
+			// создаем request
+			request := httptest.NewRequest(http.MethodPost, "/", reqbody)
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
-			// определяем handler
-			engine.POST("/", handlerPost)
+			// определяем хендлер
+			h := http.HandlerFunc(handlerPost)
 			// запускаем сервер
-			engine.ServeHTTP(http.ResponseWriter(w), req)
+			h.ServeHTTP(w, request)
 			res := w.Result()
-
 			// проверяем код ответа
 			if res.StatusCode != tt.want.code {
 				t.Errorf("Expected status code %d, got %d", tt.want.code, w.Code)
 			}
-
 			// получаем и проверяем тело запроса
 			defer res.Body.Close()
 			resBody, err := io.ReadAll(res.Body)
@@ -80,7 +78,8 @@ func Test_handlerPost(t *testing.T) {
 
 func Test_handlerPostAPI(t *testing.T) {
 	type args struct {
-		g *gin.Context
+		w http.ResponseWriter
+		r *http.Request
 	}
 	type want struct {
 		code        int
@@ -96,7 +95,7 @@ func Test_handlerPostAPI(t *testing.T) {
 	}{
 		{
 			// TODO: Add test cases.
-			name: "positive test #3",
+			name: "positive test #2",
 			want: want{
 				code:        201,
 				response:    "http://localhost:8080/pgatlmo",
@@ -106,29 +105,27 @@ func Test_handlerPostAPI(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// определяем handler
+			handlerPost(tt.args.w, tt.args.r)
+			// создаём тело запроса
+			reqbody = strings.NewReader("http://rqls3b.com/bnclubmjprl")
+			// создаем request
+			request := httptest.NewRequest(http.MethodPost, "/api/shorten", reqbody)
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
-			_, engine := gin.CreateTestContext(w)
-
-			// определяем handler
-			engine.POST("/api/shorten", handlerPostAPI)
-
-			// создаём новый Request
-			w.Header().Set("Content-Type", "application/json")
-
-			w.WriteHeader(http.StatusCreated)
-
-			reqbody = strings.NewReader("http://rqls3b.com/bnclubmjprl")
-
-			req := httptest.NewRequest(http.MethodPost, "/api/shorten", reqbody)
+			// определяем хендлер
+			h := http.HandlerFunc(handlerPost)
 			// запускаем сервер
-			engine.ServeHTTP(w, req)
+			h.ServeHTTP(w, request)
 			res := w.Result()
+			// задаём Contetn-Type
+			w.Header().Set("Content-Type", "application/json")
+			// задаем статус
+			w.WriteHeader(http.StatusCreated)
 			// проверяем код ответа
 			if res.StatusCode != tt.want.code {
 				t.Errorf("Expected status code %d, got %d", tt.want.code, w.Code)
 			}
-
 			// получаем и проверяем тело запроса
 			defer res.Body.Close()
 			resBody, err := io.ReadAll(res.Body)
@@ -150,7 +147,8 @@ func Test_handlerPostAPI(t *testing.T) {
 
 func Test_handlerGet(t *testing.T) {
 	type args struct {
-		g *gin.Context
+		w http.ResponseWriter
+		r *http.Request
 	}
 	type want struct {
 		code        int
@@ -165,7 +163,7 @@ func Test_handlerGet(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name: "positive test #2",
+			name: "positive test #3",
 			// args:{}
 			want: want{
 				code:        307,
@@ -176,18 +174,22 @@ func Test_handlerGet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// определяем handler
+			handlerGet(tt.args.w, tt.args.r)
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
+			// задаем header
 			w.Header().Set("Location", key)
 			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 			w.WriteHeader(http.StatusTemporaryRedirect)
-			req := httptest.NewRequest(http.MethodGet, "/:key", nil)
-			// определяем handler
-			engine.GET("/:key", handlerGet)
-			// запускаем сервер
-			engine.ServeHTTP(http.ResponseWriter(w), req)
-			res := w.Result()
+			// создаем request
+			request := httptest.NewRequest(http.MethodGet, "/:key", nil)
 
+			// определяем хендлер
+			h := http.HandlerFunc(handlerPost)
+			// запускаем сервер
+			h.ServeHTTP(w, request)
+			res := w.Result()
 			// проверяем код ответа
 			if res.StatusCode != tt.want.code {
 				t.Errorf("Expected status code %d, got %d", tt.want.code, w.Code)
