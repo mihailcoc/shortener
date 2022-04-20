@@ -8,8 +8,8 @@ import (
 )
 
 type Config struct {
-	SERVER_ADDRESS string `env:"localhost:8080"`
-	BASE_URL       string `env:"localhost:8080"`
+	Server_Address string `env:"localhost:8080"`
+	Base_Url       string `env:"localhost:8080"`
 }
 
 var (
@@ -27,7 +27,7 @@ func main() {
 	//os.Setenv("ServerAddress", "localhost"+port)
 	//os.Setenv("baseURL", "http:/"+os.Getenv("ServerAddress")+"/")
 	srv := http.Server{
-		Addr:    addr,
+		//Addr:    addr,
 		Handler: router,
 	}
 
