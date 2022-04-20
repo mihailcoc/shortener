@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	ServerAddress string `env:"localhost:8080"`
-	BaseUrl       string `env:"localhost:8080"`
+	BaseURL       string `env:"localhost:8080"`
 }
 
 var (
