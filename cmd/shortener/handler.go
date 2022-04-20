@@ -9,6 +9,12 @@ import (
 	"strings"
 )
 
+var (
+	addr    = "localhost:8080"
+	scheme  = "http"
+	baseURL = scheme + "://" + addr
+)
+
 //  описываем структуру JSON в запросе - {"url":"<some_url>"}
 type jsonURLBody struct {
 	URL string `json:"url"`
