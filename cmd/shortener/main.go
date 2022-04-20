@@ -28,7 +28,7 @@ func main() {
 	os.Setenv("ServerAddress", "localhost"+port)
 	os.Setenv("baseURL", "http:/"+os.Getenv("ServerAddress")+"/")
 	srv := http.Server{
-		//Addr:    http:/localhost:8080,
+		Addr:    baseURL,
 		Handler: router,
 	}
 
