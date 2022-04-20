@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -22,19 +23,17 @@ var (
 func main() {
 	// init router
 	router := mux.NewRouter()
-	//router := http.NewRouter()
 
 	//os.Setenv("ServerAddress", "localhost"+port)
 	//os.Setenv("baseURL", "http:/"+os.Getenv("ServerAddress")+"/")
-	//srv := http.Server{
-	//	//Addr:    addr,
-	//	Handler: router,
-	//}
+	srv := http.Server{
+		//Addr:    addr,
+		Handler: router,
+	}
 
 	// router handler / endpoints
-	//router.HandleFunc("/", handlerPost).Methods("POST")
 	router.HandleFunc("/", handlerPost).Methods("POST")
 	router.HandleFunc("/:key", handlerGet).Methods("GET")
 	router.HandleFunc("/api/shorten", handlerPostAPI).Methods("POST")
-	http.ListenAndServe(":8080", nil)
+	log.Fatal(srv.ListenAndServe())
 }
