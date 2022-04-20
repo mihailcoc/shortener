@@ -7,14 +7,14 @@ import (
 )
 
 type Config struct {
-	Server_Address string `env:"localhost:8080"`
-	Base_Url       string `env:"localhost:8080"`
+	ServerAddress string `env:"localhost:8080"`
+	BaseUrl       string `env:"localhost:8080"`
 }
 
 var (
-	Server_Address = "localhost:8080"
-	scheme         = "http"
-	baseURL        = scheme + "://" + Server_Address
+	ServerAddress = "localhost:8080"
+	scheme        = "http"
+	baseURL       = scheme + "://" + ServerAddress
 )
 
 const port = ":8080"
