@@ -74,7 +74,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	// Respond with JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	w.Write(shortJSONURL)
+	w.Write([]byte(shortJSONURL))
 	defer r.Body.Close()
 }
 

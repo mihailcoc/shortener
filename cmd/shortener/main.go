@@ -3,20 +3,19 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 )
 
 type Config struct {
-	ServerAddress string `env:"localhost:8080"`
-	BaseURL       string `env:"localhost:8080"`
+	SERVER_ADDRESS string `env:"localhost:8080"`
+	BASE_URL       string `env:"localhost:8080"`
 }
 
 var (
-	ServerAddress = "localhost:8080"
-	scheme        = "http"
-	baseURL       = scheme + "://" + ServerAddress
+	addr    = "localhost:8080"
+	scheme  = "http"
+	baseURL = scheme + "://" + addr
 )
 
 const port = ":8080"
@@ -25,10 +24,10 @@ func main() {
 	// init router
 	router := mux.NewRouter()
 
-	os.Setenv("ServerAddress", "localhost"+port)
-	os.Setenv("baseURL", "http:/"+os.Getenv("ServerAddress")+"/")
+	//os.Setenv("ServerAddress", "localhost"+port)
+	//os.Setenv("baseURL", "http:/"+os.Getenv("ServerAddress")+"/")
 	srv := http.Server{
-		Addr:    baseURL,
+		Addr:    addr,
 		Handler: router,
 	}
 
