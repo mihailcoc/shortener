@@ -66,15 +66,17 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Распарсили JSON: %s", err)
 	}
 	log.Printf("Распарсили JSON jsonURL: %s", jsonURL)
+	log.Printf("Распарсили JSON jsonBody.URL: %s", jsonBody.URL)
 
 	// получаем Go-описание типа
 	objType := reflect.ValueOf(jsonBody).Type()
 
-	// ищем поле по имени
+	// ищем поле по имени URL
 	objField, ok := objType.FieldByName(targetField)
 	if !ok {
 		panic(fmt.Errorf("field (%s): not found", targetField))
 	}
+
 	// получаем метаинформацию о поле
 	fieldTag := objField.Tag
 	// ищем тег по имени
@@ -85,9 +87,31 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("Значение тега (%s) поля (%s): %s\n", targetTag, targetField, tagValue)
 
-	log.Printf("Распарсили JSON tagValue: %s", tagValue)
+	fmt.Printf("Распарсили JSON tagValue: %s jsonBody: %s", tagValue, jsonBody)
+
+	// получаем Go-описание типа
+
+	//objValue := reflect.ValueOf(jsonBody).MapRange().Value()
+
+	// ищем поле по имени URL
+	//objValuebyName, ok := objValue.Type().FieldByName(targetField)
+	//if !ok {
+	//	panic(fmt.Errorf("field (%s): not found", targetField))
+	//}
+
+	//fieldTagValue := objValue.Addr().MapRange().Value()
+	// ищем тег по имени
+	//tagValue, ok := fieldTag.Lookup(fieldTagValue)
+	//if !ok {
+	//	panic(fmt.Errorf("tag (%s) for field (%s): not found", targetTag, targetField))
+	//}
+
+	fmt.Printf("Значение тега (%s) поля (%s): %s\n", targetTag, targetField, tagValue)
+
+	fmt.Printf("Распарсили JSON tagValue: %s jsonBody: %s", tagValue, jsonBody)
+
 	// По ключу помещаем значение localhost map.
-	mKey := randomString(len(tagValue) / 4)
+	mKey := randomString(len(jsonURL) / 4)
 	log.Printf("Получен mKey: %s", mKey)
 
 	urls[mKey] = string(jsonURL)
