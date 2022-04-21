@@ -13,9 +13,9 @@ type Config struct {
 }
 
 var (
-	addr    = "localhost:8080"
-	scheme  = "http"
-	baseURL = scheme + "://" + addr
+	SERVER_ADDRESS = "localhost:8080"
+	scheme         = "http"
+	BASE_URL       = scheme + "://" + SERVER_ADDRESS
 )
 
 const port = ":8080"
@@ -27,7 +27,7 @@ func main() {
 	//os.Setenv("Server_Address", "localhost"+port)
 	//os.Setenv("Base_Url", "http:/"+os.Getenv("Server_Address")+"/")
 	srv := http.Server{
-		Addr:    addr,
+		Addr:    SERVER_ADDRESS,
 		Handler: router,
 	}
 
