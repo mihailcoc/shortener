@@ -20,6 +20,11 @@ const (
 	targetTag   = "json"
 )
 
+//  описываем структуру в которой будет хранить данные
+type URLBody struct {
+	URL string `text:"url"`
+}
+
 //  описываем структуру JSON в запросе - {"url":"<some_url>"}
 type jsonURLBody struct {
 	URL string `json:"url"`
@@ -108,10 +113,10 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Распарсили JSON tagValue: %s jsonBody.URL: %s string(jsonBody.URL): %s", tagValue, jsonBody.URL, string(jsonBody.URL))
 
 	// По ключу помещаем значение localhost map.
-	mKey := randomString(len(jsonBody.URL) / 4)
+	mKey := randomString(len(string(jsonBody.URL)) / 4)
 	log.Printf("Получен mKey: %s", mKey)
 
-	urls[mKey] = string(jsonURL)
+	urls[mKey] = string(jsonBody.URL)
 	shortURL := fmt.Sprintf("%s/%s", baseURL, mKey)
 	log.Printf("Получен shortURL: %s", shortURL)
 
