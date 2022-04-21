@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -15,19 +17,24 @@ type Config struct {
 var (
 	ServerAddress = "localhost:8080"
 	scheme        = "http"
-	BaseUrl       = scheme + "://" + ServerAddress
+	BaseURL       = scheme + "://" + ServerAddress
 )
 
-const port = ":8080"
+var port = ":8080"
 
 func main() {
+
+	os.Setenv("ServerAddress", "localhost"+port)
+	os.Setenv("BaseURL", "http:/"+os.Getenv("ServerAddress")+"/")
+	ServerAddress := flag.String("a", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	if u, f := os.LookupEnv("ServerAddress"); f {
+		*ServerAddress = u
+	}
 	// init router
 	router := mux.NewRouter()
 
-	//os.Setenv("Server_Address", "localhost"+port)
-	//os.Setenv("Base_Url", "http:/"+os.Getenv("Server_Address")+"/")
 	srv := http.Server{
-		Addr:    ServerAddress,
+		Addr:    *ServerAddress,
 		Handler: router,
 	}
 
