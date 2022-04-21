@@ -42,7 +42,7 @@ func handlerPost(w http.ResponseWriter, r *http.Request) {
 
 	urls[mKey] = string(body)
 
-	response := fmt.Sprintf("%s/%s", BaseUrl, mKey)
+	response := fmt.Sprintf("%s/%s", BaseURL, mKey)
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(response))
@@ -93,7 +93,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Получен mKey: %s", mKey)
 
 	urls[mKey] = string(jsonBody.URL)
-	shortURL := fmt.Sprintf("%s/%s", BaseUrl, mKey)
+	shortURL := fmt.Sprintf("%s/%s", BaseURL, mKey)
 	log.Printf("Получен shortURL: %s", shortURL)
 
 	// создаем экземпляр структуры и вставляем в него короткий URL для отправки в JSON
