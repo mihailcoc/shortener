@@ -20,11 +20,6 @@ const (
 	targetTag   = "json"
 )
 
-//  описываем структуру в которой будет хранить данные
-type URLBody struct {
-	URL string `text:"url"`
-}
-
 //  описываем структуру JSON в запросе - {"url":"<some_url>"}
 type jsonURLBody struct {
 	URL string `json:"url"`
@@ -41,7 +36,7 @@ func handlerPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	//log.Printf("Получено тело запроса: %s", body)
+	log.Printf("Получено тело запроса: %s", body)
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(body) / 4)
 
@@ -70,8 +65,6 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Распарсили JSON: %s", err)
 	}
-	log.Printf("Распарсили JSON jsonURL: %s", jsonURL)
-	log.Printf("Распарсили JSON jsonBody.URL: %s", jsonBody.URL)
 	log.Printf("Распарсили JSON string(jsonBody.URL): %s", string(jsonBody.URL))
 
 	// получаем Go-описание типа
@@ -92,23 +85,6 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf("Значение тега (%s) поля (%s): %s\n", targetTag, targetField, tagValue)
-
-	// получаем Go-описание типа
-
-	//objValue := reflect.ValueOf(jsonBody).MapRange().Value()
-
-	// ищем поле по имени URL
-	//objValuebyName, ok := objValue.Type().FieldByName(targetField)
-	//if !ok {
-	//	panic(fmt.Errorf("field (%s): not found", targetField))
-	//}
-
-	//fieldTagValue := objValue.Addr().MapRange().Value()
-	// ищем тег по имени
-	//tagValue, ok := fieldTag.Lookup(fieldTagValue)
-	//if !ok {
-	//	panic(fmt.Errorf("tag (%s) for field (%s): not found", targetTag, targetField))
-	//}
 
 	fmt.Printf("Распарсили JSON tagValue: %s jsonBody.URL: %s string(jsonBody.URL): %s", tagValue, jsonBody.URL, string(jsonBody.URL))
 
@@ -148,7 +124,6 @@ func handlerGet(w http.ResponseWriter, r *http.Request) {
 		jsonBody := jsonURLBody{}
 
 		// парсим JSON и записываем результат в экземпляр структуры
-		//err := json.Unmarshal([]byte(jsonURL), &jsonBody)
 		if err := json.Unmarshal([]byte(jsonURL), &jsonBody); err != nil {
 			log.Printf("Распарсили JSON: %s", err)
 		}
@@ -171,7 +146,6 @@ func handlerGet(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(longJSONURL))
 			defer r.Body.Close()
 		}
-
 	default:
 		log.Printf("%s %q", r.Method, html.EscapeString(r.URL.Path))
 		log.Printf("Получен get text/html")
@@ -181,20 +155,13 @@ func handlerGet(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("url is missing in parameters")
 		}
 		fmt.Println(`url := `, key)
-
 		keykey := strings.TrimPrefix(r.URL.Path, "/")
 		log.Printf("Получен key %s", keykey)
-		//key := r.URL.Path
-		//log.Printf("Получен key %s", key)
 		if url, ok := urls[key]; ok {
 			log.Printf("Отдаем url %s", url)
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.Header().Set("Location", url)
-			//	w.Header.Set("Location", url)
-			//g.Header("Location", url)
 			w.WriteHeader(http.StatusTemporaryRedirect)
-			//g.Redirect(http.StatusTemporaryRedirect, url)
-			//return
 			defer r.Body.Close()
 		}
 	}
