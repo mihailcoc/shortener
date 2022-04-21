@@ -22,17 +22,20 @@ var (
 )
 
 func main() {
-
-	os.Setenv("ServerAddress", "localhost"+port)
+	os.Setenv("port", ":8080")
+	os.Setenv("ServerAddress", "localhost"+os.Getenv("port"))
 	os.Setenv("BaseURL", "http:/"+os.Getenv("ServerAddress")+"/")
 	ServerAddress := flag.String("a", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	if u, f := os.LookupEnv("ServerAddress"); f {
 		*ServerAddress = u
 	}
+	flag.Parse()
 	port := flag.String("b", ":8000", "PORT - порт для запуска HTTP-сервера")
 	if uport, f := os.LookupEnv("port"); f {
 		*port = uport
 	}
+	flag.Parse()
+	//log.Printf("Распарсили flag: %s", flag.Parse())
 	// init router
 	router := mux.NewRouter()
 
