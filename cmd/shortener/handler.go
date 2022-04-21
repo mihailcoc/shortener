@@ -45,7 +45,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Получен post application/json")
 	jsonURL, err := io.ReadAll(r.Body) // считываем JSON из тела запроса
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	log.Printf("Получено тело запроса: %s", jsonURL)
 
@@ -72,7 +72,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	// изготавливаем JSON
 	shortJSONURL, err := json.Marshal(resultURL)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	log.Printf("Получен shortJSONURL: %s", shortJSONURL)
 	// Respond with JSON
@@ -84,27 +84,63 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlerGet(w http.ResponseWriter, r *http.Request) {
-	log.Printf("%s %q", r.Method, html.EscapeString(r.URL.Path))
-	vars := mux.Vars(r)
-	key, ok := vars["url"]
-	if !ok {
-		fmt.Println("url is missing in parameters")
-	}
-	fmt.Println(`url := `, key)
+	switch r.Header.Get("Content-Type") {
+	case "application/json":
+		log.Printf("Получен get application/json")
+		jsonURL := strings.TrimPrefix(r.URL.Path, "/")
+		log.Printf("Получен key %s", jsonURL)
+		// создаеём экземпляр структуры для заполнения из JSON
+		jsonBody := jsonURLBody{}
 
-	keykey := strings.TrimPrefix(r.URL.Path, "/")
-	log.Printf("Получен key %s", keykey)
-	//key := r.URL.Path
-	//log.Printf("Получен key %s", key)
-	if url, ok := urls[key]; ok {
-		log.Printf("Отдаем url %s", url)
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Header().Set("Location", url)
-		//	w.Header.Set("Location", url)
-		//g.Header("Location", url)
-		w.WriteHeader(http.StatusTemporaryRedirect)
-		//g.Redirect(http.StatusTemporaryRedirect, url)
-		//return
-		defer r.Body.Close()
+		// парсим JSON и записываем результат в экземпляр структуры
+		//err := json.Unmarshal([]byte(jsonURL), &jsonBody)
+		if err := json.Unmarshal([]byte(jsonURL), &jsonBody); err != nil {
+			log.Printf("Распарсили JSON: %s", err)
+		}
+		if url, ok := urls[jsonURL]; ok {
+			log.Printf("Отдаем url %s", url)
+			// создаем экземпляр структуры и вставляем в него короткий URL для отправки в JSON
+			resultURL := ResultURL{
+				Result: url,
+			}
+			// изготавливаем JSON
+			longJSONURL, err := json.Marshal(resultURL)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Printf("Получен shortJSONURL: %s", longJSONURL)
+			// Respond with JSON
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Location", string(longJSONURL))
+			w.WriteHeader(http.StatusTemporaryRedirect)
+			w.Write([]byte(longJSONURL))
+			defer r.Body.Close()
+		}
+
+	default:
+		log.Printf("%s %q", r.Method, html.EscapeString(r.URL.Path))
+		vars := mux.Vars(r)
+		key, ok := vars["url"]
+		if !ok {
+			fmt.Println("url is missing in parameters")
+		}
+		fmt.Println(`url := `, key)
+
+		keykey := strings.TrimPrefix(r.URL.Path, "/")
+		log.Printf("Получен key %s", keykey)
+		//key := r.URL.Path
+		//log.Printf("Получен key %s", key)
+		if url, ok := urls[key]; ok {
+			log.Printf("Отдаем url %s", url)
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.Header().Set("Location", url)
+			//	w.Header.Set("Location", url)
+			//g.Header("Location", url)
+			w.WriteHeader(http.StatusTemporaryRedirect)
+			//g.Redirect(http.StatusTemporaryRedirect, url)
+			//return
+			defer r.Body.Close()
+		}
 	}
+
 }
