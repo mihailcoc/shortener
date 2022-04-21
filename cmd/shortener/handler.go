@@ -3,10 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"io"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 //  описываем структуру JSON в запросе - {"url":"<some_url>"}
@@ -20,6 +23,7 @@ type ResultURL struct {
 }
 
 func handlerPost(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Получен post text/plain")
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		panic(err)
@@ -50,9 +54,9 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 
 	// парсим JSON и записываем результат в экземпляр структуры
 	err = json.Unmarshal(jsonURL, &jsonBody)
-	//if err != nil {
-	//	panic(err)
-	//}
+	if err != nil {
+		log.Printf("Распарсили JSON: %s", err)
+	}
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(jsonURL) / 4)
 	log.Printf("Получен mKey: %s", mKey)
@@ -80,10 +84,18 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlerGet(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Получен get default")
-	//key := r.Param("key")
-	key := strings.TrimPrefix(r.URL.Path, "/")
-	log.Printf("Получен key %s", key)
+	log.Printf("%s %q", r.Method, html.EscapeString(r.URL.Path))
+	vars := mux.Vars(r)
+	key, ok := vars["url"]
+	if !ok {
+		fmt.Println("url is missing in parameters")
+	}
+	fmt.Println(`url := `, key)
+
+	keykey := strings.TrimPrefix(r.URL.Path, "/")
+	log.Printf("Получен key %s", keykey)
+	//key := r.URL.Path
+	//log.Printf("Получен key %s", key)
 	if url, ok := urls[key]; ok {
 		log.Printf("Отдаем url %s", url)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")

@@ -32,8 +32,8 @@ func main() {
 	}
 
 	// router handler / endpoints
+	router.HandleFunc("/{url}", handlerGet).Methods("GET")
 	router.HandleFunc("/", handlerPost).Methods("POST")
-	router.HandleFunc("/:key", handlerGet).Methods("GET")
 	router.HandleFunc("/api/shorten", handlerPostAPI).Methods("POST")
 	log.Fatal(srv.ListenAndServe())
 }
