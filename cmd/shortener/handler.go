@@ -111,7 +111,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Распарсили JSON tagValue: %s jsonBody: %s", tagValue, jsonBody)
 
 	// По ключу помещаем значение localhost map.
-	mKey := randomString(len(jsonURL) / 4)
+	mKey := randomString(len(jsonBody.URL) / 4)
 	log.Printf("Получен mKey: %s", mKey)
 
 	urls[mKey] = string(jsonURL)
