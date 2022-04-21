@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,9 +13,9 @@ type Config struct {
 }
 
 var (
-	ServerAddress = "localhost:8080"
-	scheme        = "http"
-	baseURL       = scheme + "://" + ServerAddress
+	addr    = "localhost:8080"
+	scheme  = "http"
+	baseURL = scheme + "://" + addr
 )
 
 const port = ":8080"
@@ -26,7 +27,7 @@ func main() {
 	//os.Setenv("Server_Address", "localhost"+port)
 	//os.Setenv("Base_Url", "http:/"+os.Getenv("Server_Address")+"/")
 	srv := http.Server{
-		Addr:    baseURL,
+		Addr:    addr,
 		Handler: router,
 	}
 
@@ -34,5 +35,5 @@ func main() {
 	router.HandleFunc("/", handlerPost).Methods("POST")
 	router.HandleFunc("/:key", handlerGet).Methods("GET")
 	router.HandleFunc("/api/shorten", handlerPostAPI).Methods("POST")
-	srv.ListenAndServe()
+	log.Fatal(srv.ListenAndServe())
 }

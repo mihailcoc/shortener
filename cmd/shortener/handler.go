@@ -50,9 +50,9 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 
 	// парсим JSON и записываем результат в экземпляр структуры
 	err = json.Unmarshal(jsonURL, &jsonBody)
-	if err != nil {
-		panic(err)
-	}
+	//if err != nil {
+	//	panic(err)
+	//}
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(jsonURL) / 4)
 	log.Printf("Получен mKey: %s", mKey)
@@ -74,6 +74,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	// Respond with JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	//w.Write(shortJSONURL)
 	w.Write([]byte(shortJSONURL))
 	defer r.Body.Close()
 }
