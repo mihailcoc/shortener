@@ -15,12 +15,11 @@ type Config struct {
 }
 
 var (
-	ServerAddress = "localhost:8080"
+	port          = ":8080"
+	ServerAddress = "localhost" + port
 	scheme        = "http"
 	BaseURL       = scheme + "://" + ServerAddress
 )
-
-var port = ":8080"
 
 func main() {
 
@@ -29,6 +28,10 @@ func main() {
 	ServerAddress := flag.String("a", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	if u, f := os.LookupEnv("ServerAddress"); f {
 		*ServerAddress = u
+	}
+	port := flag.String("b", ":8000", "PORT - порт для запуска HTTP-сервера")
+	if uport, f := os.LookupEnv("port"); f {
+		*port = uport
 	}
 	// init router
 	router := mux.NewRouter()
