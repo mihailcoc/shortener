@@ -53,7 +53,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	jsonBody := jsonURLBody{}
 
 	// парсим JSON и записываем результат в экземпляр структуры
-	err = json.Unmarshal(jsonURL, &jsonBody)
+	err = json.Unmarshal([]byte(jsonURL), &jsonBody)
 	if err != nil {
 		log.Printf("Распарсили JSON: %s", err)
 	}
