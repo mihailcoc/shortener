@@ -57,6 +57,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Распарсили JSON: %s", err)
 	}
+	log.Printf("Распарсили JSON: %s", jsonURL)
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(jsonURL) / 4)
 	log.Printf("Получен mKey: %s", mKey)
@@ -119,6 +120,7 @@ func handlerGet(w http.ResponseWriter, r *http.Request) {
 
 	default:
 		log.Printf("%s %q", r.Method, html.EscapeString(r.URL.Path))
+		log.Printf("Получен get text/html")
 		vars := mux.Vars(r)
 		key, ok := vars["url"]
 		if !ok {
