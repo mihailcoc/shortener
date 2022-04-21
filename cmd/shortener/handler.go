@@ -67,6 +67,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Распарсили JSON jsonURL: %s", jsonURL)
 	log.Printf("Распарсили JSON jsonBody.URL: %s", jsonBody.URL)
+	log.Printf("Распарсили JSON string(jsonBody.URL): %s", string(jsonBody.URL))
 
 	// получаем Go-описание типа
 	objType := reflect.ValueOf(jsonBody).Type()
@@ -87,8 +88,6 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("Значение тега (%s) поля (%s): %s\n", targetTag, targetField, tagValue)
 
-	fmt.Printf("Распарсили JSON tagValue: %s jsonBody: %s", tagValue, jsonBody)
-
 	// получаем Go-описание типа
 
 	//objValue := reflect.ValueOf(jsonBody).MapRange().Value()
@@ -106,9 +105,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	//	panic(fmt.Errorf("tag (%s) for field (%s): not found", targetTag, targetField))
 	//}
 
-	fmt.Printf("Значение тега (%s) поля (%s): %s\n", targetTag, targetField, tagValue)
-
-	fmt.Printf("Распарсили JSON tagValue: %s jsonBody: %s", tagValue, jsonBody)
+	fmt.Printf("Распарсили JSON tagValue: %s jsonBody.URL: %s string(jsonBody.URL): %s", tagValue, jsonBody.URL, string(jsonBody.URL))
 
 	// По ключу помещаем значение localhost map.
 	mKey := randomString(len(jsonBody.URL) / 4)
