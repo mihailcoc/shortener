@@ -40,7 +40,7 @@ func main() {
 	flag.Parse()
 	//pflag.StringVarP(*ServerAddress, port)
 	log.Printf("1 &ServerAddress:")
-	log.Println(&ServerAddress)
+	log.Println(ServerAddress)
 	//flag.StringVar(&config.ServerAddress, "a", "127.0.0.1:8080", "server address")
 	//flag.Parse()
 	//log.Printf("ServerAddress: %s", ServerAddress)
@@ -56,16 +56,15 @@ func main() {
 	}
 	flag.Parse()
 	log.Printf("2 &ServerAddress:")
-	log.Println(&ServerAddress)
+	log.Println(ServerAddress)
 
 	port := flag.String("b", ":8000", "PORT - порт для запуска HTTP-сервера")
 	if uport, f := os.LookupEnv("port"); f {
 		*port = uport
 	}
 	flag.Parse()
-	log.Println(port)
 	log.Printf("port:")
-	log.Println(&port)
+	log.Println(port)
 	// init router
 	router := mux.NewRouter()
 
