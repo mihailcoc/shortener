@@ -53,12 +53,12 @@ func main() {
 	}
 	flag.Parse()
 	log.Printf("*ServerAddress перед сервером")
-	log.Println(ServerAddress)
+	log.Println(*ServerAddress)
 
 	router := mux.NewRouter()
 
 	srv := http.Server{
-		Addr:    ServerAddress,
+		Addr:    *ServerAddress,
 		Handler: router,
 	}
 
