@@ -29,12 +29,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("cfg.Host: %s", cfg.Host)
 	log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
-	log.Printf("cfg.BaseURL: %s", cfg.BaseURL)
-	os.Setenv("port", ":8080")
-	os.Setenv("ServerAddress", "localhost"+os.Getenv("port"))
-	os.Setenv("BaseURL", "http:/"+os.Getenv("ServerAddress")+"/")
+	//os.Setenv("port", ":8080")
+	os.Setenv("ServerAddress", ":8080")
+	//os.Setenv("ServerAddress", "localhost"+os.Getenv("port"))
+	os.Setenv("BaseURL", "http:/localhost"+os.Getenv("ServerAddress")+"/")
 
 	ServerAddress := flag.String("a", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	flag.Parse()
@@ -69,7 +68,7 @@ func main() {
 	router := mux.NewRouter()
 
 	srv := http.Server{
-		Addr:    cfg.ServerAddress,
+		Addr:    *ServerAddress,
 		Handler: router,
 	}
 
