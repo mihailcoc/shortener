@@ -6,12 +6,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/caarlos0/env/v6"
 	"github.com/gorilla/mux"
 )
 
 type Config struct {
-	ServerAddress string `env:"SERVER_ADDRESS" envDefault:":8080"`
+	ServerAddress int    `env:"SERVER_ADDRESS" envDefault:":8080"`
 	BaseURL       string `env:"localhost:8080"`
 }
 
@@ -29,27 +28,27 @@ func main() {
 	log.Println(ServerAddress)
 	log.Printf("ServerAddress")
 	log.Println(ServerAddress)
-	var cfg Config
-	err := env.Parse(&cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
-	ServerAddress := cfg.ServerAddress
+	//var cfg Config
+	//err := env.Parse(&cfg)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
+	//*ServerAddress := cfg.ServerAddress
 
 	//os.Setenv("port", ":8080")
 	//os.Setenv("SERVER_ADDRESS", ":8080")
 	//os.Setenv("ServerAddress", "localhost"+os.Getenv("port"))
 	//os.Setenv("BaseURL", "http:/localhost"+os.Getenv("ServerAddress")+"/")
 
-	//ServerAddress := flag.String("a", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
-	//flag.Parse()
+	ServerAddress := flag.String("a", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	flag.Parse()
 	//pflag.StringVarP(*ServerAddress, port)
 	//log.Printf("1 &ServerAddress:")
 	//log.Println(ServerAddress)
 
 	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
-		ServerAddress = u
+		*ServerAddress = u
 	}
 	flag.Parse()
 	log.Printf("*ServerAddress перед сервером")
