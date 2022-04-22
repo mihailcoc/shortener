@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/caarlos0/env"
 	"github.com/gorilla/mux"
-	"github.com/spf13/pflag"
 )
 
 type Config struct {
@@ -23,14 +23,18 @@ var (
 
 func main() {
 	// 1 вариант
-	//var cfg Config
-	//err := env.Parse(&cfg)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
-	//ServerAddress := cfg.ServerAddress
-	//log.Println(ServerAddress)
+	var cfg Config
+	err := env.Parse(&cfg)
+	if err != nil {
+		os.Setenv("SERVER_ADDRESS", ":8080")
+		ServerAddress = os.Getenv("ServerAddress")
+	}
+	{
+		log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
+		ServerAddress := cfg.ServerAddress
+		log.Println(ServerAddress)
+	}
+
 	// 1 вариант
 
 	//os.Setenv("port", ":8080")
@@ -53,11 +57,11 @@ func main() {
 	//2 вариант
 
 	//3 вариант
-	os.Setenv("SERVER_ADDRESS", ":8080")
-	ServerAddress := os.Getenv("SERVER_ADDRESS")
-	pflag.StringVarP(&ServerAddress, "SERVER_ADDRESS", "s", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
-	pflag.Parse()
-	log.Println(ServerAddress)
+	//os.Setenv("SERVER_ADDRESS", ":8080")
+	//ServerAddress := os.Getenv("SERVER_ADDRESS")
+	//pflag.StringVarP(&ServerAddress, "SERVER_ADDRESS", "s", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	//pflag.Parse()
+	//log.Println(ServerAddress)
 	//3 вариант
 
 	router := mux.NewRouter()
