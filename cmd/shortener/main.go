@@ -11,7 +11,7 @@ import (
 )
 
 type Config struct {
-	ServerAddress string `env:"localhost:8080"`
+	ServerAddress string `env:"SERVER_ADDRESS" envDefault:":8080"`
 	BaseURL       string `env:"localhost:8080"`
 	Host          string `env:"localhost:8080"`
 }
@@ -32,20 +32,39 @@ func main() {
 	log.Printf("cfg.Host: %s", cfg.Host)
 	log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
 	log.Printf("cfg.BaseURL: %s", cfg.BaseURL)
-	os.Setenv("port", ":8080")
-	os.Setenv("ServerAddress", "localhost"+os.Getenv("port"))
-	os.Setenv("BaseURL", "http:/"+os.Getenv("ServerAddress")+"/")
+	//os.Setenv("port", ":8080")
+	//os.Setenv("ServerAddress", "localhost"+os.Getenv("port"))
+	//os.Setenv("BaseURL", "http:/"+os.Getenv("ServerAddress")+"/")
+
 	ServerAddress := flag.String("a", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	flag.Parse()
+	log.Printf("1 &ServerAddress:")
+	log.Println(&ServerAddress)
+	//flag.StringVar(&config.ServerAddress, "a", "127.0.0.1:8080", "server address")
+	//flag.Parse()
+	//log.Printf("ServerAddress: %s", ServerAddress)
+
+	//ServerAddress, exist := os.LookupEnv("ADDRESS")
+	//if exist {
+	//	config.ServerAddress = ServerAddress
+	//}
+	//log.Printf("ServerAddress: %s", ServerAddress)
+
 	if u, f := os.LookupEnv("ServerAddress"); f {
 		*ServerAddress = u
 	}
 	flag.Parse()
+	log.Printf("2 &ServerAddress:")
+	log.Println(&ServerAddress)
+
 	port := flag.String("b", ":8000", "PORT - порт для запуска HTTP-сервера")
 	if uport, f := os.LookupEnv("port"); f {
 		*port = uport
 	}
 	flag.Parse()
-	//log.Printf("Распарсили flag: %s", flag.Parse())
+	log.Println(port)
+	log.Printf("port:")
+	log.Println(&port)
 	// init router
 	router := mux.NewRouter()
 
