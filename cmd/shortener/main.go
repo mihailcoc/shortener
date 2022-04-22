@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	ServerAddress int    `env:"SERVER_ADDRESS" envDefault:":8080"`
+	ServerAddress string `env:"SERVER_ADDRESS" envDefault:":8080"`
 	BaseURL       string `env:"localhost:8080"`
 }
 
@@ -22,12 +22,10 @@ var (
 )
 
 func main() {
-	os.Setenv("SERVER_ADDRESS", ":8080")
-	os.Getenv("SERVER_ADDRESS")
-	log.Printf("Getenv ServerAddress")
-	log.Println(ServerAddress)
-	log.Printf("ServerAddress")
-	log.Println(ServerAddress)
+	//os.Setenv("SERVER_ADDRESS", ":8080")
+	//os.Getenv("SERVER_ADDRESS")
+	//log.Printf("Getenv ServerAddress")
+	//log.Println(ServerAddress)
 	// 1 вариант
 	//var cfg Config
 	//err := env.Parse(&cfg)
@@ -54,7 +52,6 @@ func main() {
 	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
 		*ServerAddress = u
 	}
-	flag.Parse()
 	log.Printf("*ServerAddress перед сервером")
 	log.Println(*ServerAddress)
 	//2 вариант
