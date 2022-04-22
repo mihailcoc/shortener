@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/caarlos0/env/v6"
 	"github.com/gorilla/mux"
@@ -41,10 +42,10 @@ func main() {
 	log.Printf("1 &ServerAddress:")
 	log.Println(ServerAddress)
 
-	//if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
-	//	*ServerAddress = u
-	//}
-	//flag.Parse()
+	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
+		*ServerAddress = u
+	}
+	flag.Parse()
 	log.Printf("*ServerAddress перед сервером")
 	log.Println(*ServerAddress)
 
