@@ -24,12 +24,14 @@ var (
 )
 
 func main() {
-	var Host Config
-	err := env.Parse(&Host)
+	var cfg Config
+	err := env.Parse(&cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Host: %s", Host)
+	log.Printf("cfg.Host: %s", cfg.Host)
+	log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
+	log.Printf("cfg.BaseURL: %s", cfg.BaseURL)
 	os.Setenv("port", ":8080")
 	os.Setenv("ServerAddress", "localhost"+os.Getenv("port"))
 	os.Setenv("BaseURL", "http:/"+os.Getenv("ServerAddress")+"/")
