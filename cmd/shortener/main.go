@@ -53,6 +53,7 @@ func main() {
 	//2 вариант
 
 	//3 вариант
+	os.Setenv("SERVER_ADDRESS", ":8080")
 	ServerAddress := os.Getenv("SERVER_ADDRESS")
 	pflag.StringVarP(&ServerAddress, "SERVER_ADDRESS", "s", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	pflag.Parse()
