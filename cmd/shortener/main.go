@@ -1,11 +1,11 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/caarlos0/env"
 	"github.com/gorilla/mux"
 )
 
@@ -27,13 +27,14 @@ func main() {
 	log.Printf("Getenv ServerAddress")
 	log.Println(ServerAddress)
 	// 1 вариант
-	//var cfg Config
-	//err := env.Parse(&cfg)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
-	//*ServerAddress := cfg.ServerAddress
+	var cfg Config
+	err := env.Parse(&cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
+	ServerAddress := cfg.ServerAddress
+	log.Println(ServerAddress)
 	// 1 вариант
 
 	//os.Setenv("port", ":8080")
@@ -46,20 +47,20 @@ func main() {
 	//3 вариант
 
 	//2 вариант
-	ServerAddress := flag.String(ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
-	flag.Parse()
+	//ServerAddress := flag.String(ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	//flag.Parse()
 
-	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
-		*ServerAddress = u
-	}
-	log.Printf("*ServerAddress перед сервером")
-	log.Println(*ServerAddress)
+	//if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
+	//	*ServerAddress = u
+	//}
+	//log.Printf("*ServerAddress перед сервером")
+	//log.Println(*ServerAddress)
 	//2 вариант
 
 	router := mux.NewRouter()
 
 	srv := http.Server{
-		Addr:    *ServerAddress,
+		Addr:    ServerAddress,
 		Handler: router,
 	}
 
