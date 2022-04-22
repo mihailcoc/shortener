@@ -39,18 +39,18 @@ func main() {
 	//os.Setenv("BaseURL", "http:/localhost"+os.Getenv("ServerAddress")+"/")
 
 	//2 вариант
-	os.Setenv("SERVER_ADDRESS", ":8080")
-	os.Getenv("SERVER_ADDRESS")
+	//os.Setenv("SERVER_ADDRESS", ":8080")
+	//os.Getenv("SERVER_ADDRESS")
 	log.Printf("Getenv ServerAddress")
 	log.Println(ServerAddress)
 	ServerAddress := flag.String(ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	flag.Parse()
 	log.Println(*ServerAddress)
-	//if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
-	//	*ServerAddress = u
-	//}
-	//log.Printf("*ServerAddress перед сервером")
-	//log.Println(*ServerAddress)
+	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
+		*ServerAddress = u
+	}
+	log.Printf("*ServerAddress перед сервером")
+	log.Println(*ServerAddress)
 	//2 вариант
 
 	//3 вариант
