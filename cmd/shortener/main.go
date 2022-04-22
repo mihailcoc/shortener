@@ -68,7 +68,7 @@ func main() {
 	router := mux.NewRouter()
 
 	srv := http.Server{
-		Addr:    *ServerAddress,
+		Addr:    cfg.ServerAddress,
 		Handler: router,
 	}
 
