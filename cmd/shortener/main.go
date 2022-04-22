@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/caarlos0/env"
 	"github.com/gorilla/mux"
@@ -22,10 +21,10 @@ var (
 )
 
 func main() {
-	os.Setenv("SERVER_ADDRESS", ":8080")
-	os.Getenv("SERVER_ADDRESS")
-	log.Printf("Getenv ServerAddress")
-	log.Println(ServerAddress)
+	//os.Setenv("SERVER_ADDRESS", ":8080")
+	//os.Getenv("SERVER_ADDRESS")
+	//log.Printf("Getenv ServerAddress")
+	//log.Println(ServerAddress)
 	// 1 вариант
 	var cfg Config
 	err := env.Parse(&cfg)
