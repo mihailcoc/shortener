@@ -6,12 +6,14 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/caarlos0/env/v6"
 	"github.com/gorilla/mux"
 )
 
 type Config struct {
 	ServerAddress string `env:"localhost:8080"`
 	BaseURL       string `env:"localhost:8080"`
+	Host          string `env:"localhost:8080"`
 }
 
 var (
@@ -22,6 +24,12 @@ var (
 )
 
 func main() {
+	var Host Config
+	err := env.Parse(&Host)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Host: %s", Host)
 	os.Setenv("port", ":8080")
 	os.Setenv("ServerAddress", "localhost"+os.Getenv("port"))
 	os.Setenv("BaseURL", "http:/"+os.Getenv("ServerAddress")+"/")
