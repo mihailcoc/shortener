@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/caarlos0/env/v6"
 	"github.com/gorilla/mux"
@@ -21,6 +23,10 @@ var (
 )
 
 func main() {
+	os.Setenv("SERVER_ADDRESS", ":8080")
+	os.Getenv("SERVER_ADDRESS")
+	log.Printf("Getenv ServerAddress")
+	log.Println(ServerAddress)
 	log.Printf("ServerAddress")
 	log.Println(ServerAddress)
 	var cfg Config
@@ -42,10 +48,10 @@ func main() {
 	//log.Printf("1 &ServerAddress:")
 	//log.Println(ServerAddress)
 
-	//if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
-	//	*ServerAddress = u
-	//}
-	//flag.Parse()
+	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
+		ServerAddress = u
+	}
+	flag.Parse()
 	log.Printf("*ServerAddress перед сервером")
 	log.Println(ServerAddress)
 
