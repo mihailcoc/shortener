@@ -31,7 +31,7 @@ func main() {
 	}
 	log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
 	//os.Setenv("port", ":8080")
-	os.Setenv("ServerAddress", ":8080")
+	os.Setenv("SERVER_ADDRESS", ":8080")
 	//os.Setenv("ServerAddress", "localhost"+os.Getenv("port"))
 	os.Setenv("BaseURL", "http:/localhost"+os.Getenv("ServerAddress")+"/")
 
@@ -50,20 +50,20 @@ func main() {
 	//}
 	//log.Printf("ServerAddress: %s", ServerAddress)
 
-	if u, f := os.LookupEnv("ServerAddress"); f {
+	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
 		*ServerAddress = u
 	}
 	flag.Parse()
-	log.Printf("2 &ServerAddress:")
+	log.Printf("2 &SERVER_ADDRESS:")
 	log.Println(ServerAddress)
 
-	port := flag.String("b", ":8000", "PORT - порт для запуска HTTP-сервера")
-	if uport, f := os.LookupEnv("port"); f {
-		*port = uport
-	}
-	flag.Parse()
-	log.Printf("port:")
-	log.Println(port)
+	//port := flag.String("b", ":8000", "PORT - порт для запуска HTTP-сервера")
+	//if uport, f := os.LookupEnv("port"); f {
+	///	*port = uport
+	//}
+	//flag.Parse()
+	//log.Printf("port:")
+	//log.Println(port)
 	// init router
 	router := mux.NewRouter()
 
