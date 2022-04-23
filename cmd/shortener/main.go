@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -35,6 +36,11 @@ func main() {
 	//pflag.Parse()
 	//log.Printf("*ServerAddress после pflag.StringVarP")
 	//log.Println(&ServerAddress)
+
+	flag.String(ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	flag.Parse()
+	log.Printf("ServerAddress после flag.String")
+	log.Println(ServerAddress)
 
 	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
 		ServerAddress = u
