@@ -7,7 +7,6 @@ import (
 
 	"github.com/caarlos0/env"
 	"github.com/gorilla/mux"
-	"github.com/spf13/pflag"
 )
 
 type Config struct {
@@ -32,10 +31,10 @@ func main() {
 	ServerAddress := cfg.ServerAddress
 	log.Printf("ServerAddress после env.Parse %s", ServerAddress)
 
-	pflag.StringVarP(&ServerAddress, "SERVER_ADDRESS", "s", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
-	pflag.Parse()
-	log.Printf("*ServerAddress после pflag.StringVarP")
-	log.Println(&ServerAddress)
+	//pflag.StringVarP(&ServerAddress, "SERVER_ADDRESS", "s", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	//pflag.Parse()
+	//log.Printf("*ServerAddress после pflag.StringVarP")
+	//log.Println(&ServerAddress)
 
 	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
 		ServerAddress = u

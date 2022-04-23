@@ -34,7 +34,7 @@ func Test_handlerPost(t *testing.T) {
 			name: "positive test #1",
 			want: want{
 				code:        201,
-				response:    "http://localhost:8080/gmwjgsa",
+				response:    "http://127.0.0.1:8080/gmwjgsa",
 				contentType: "text/plain; charset=utf-8",
 			},
 		},
@@ -96,7 +96,7 @@ func Test_handlerPostAPI(t *testing.T) {
 			name: "positive test #2",
 			want: want{
 				code:        201,
-				response:    "http://localhost:8080/pgatlmo",
+				response:    "http://127.0.0.1:8080/pgatlmo",
 				contentType: "application/json",
 			},
 		},
