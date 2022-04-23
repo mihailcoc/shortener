@@ -62,8 +62,7 @@ func main() {
 	//2 вариант
 
 	//3 вариант
-	//os.Setenv("SERVER_ADDRESS", ":8080")
-	//ServerAddress := os.Getenv("SERVER_ADDRESS")
+
 	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
 		ServerAddress = u
 	}
@@ -72,6 +71,10 @@ func main() {
 	pflag.StringVarP(&ServerAddress, "SERVER_ADDRESS", "s", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	pflag.Parse()
 	log.Printf("ServerAddress после pflag.Parse")
+	log.Println(ServerAddress)
+	os.Setenv("SERVER_ADDRESS", ":8080")
+	ServerAddress := os.Getenv("SERVER_ADDRESS")
+	log.Printf("*ServerAddress перед сервером")
 	log.Println(ServerAddress)
 	//3 вариант
 
