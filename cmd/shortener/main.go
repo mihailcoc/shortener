@@ -37,7 +37,7 @@ func main() {
 	//log.Printf("*ServerAddress после pflag.StringVarP")
 	//log.Println(&ServerAddress)
 
-	flag.String(ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	flag.String(cfg.ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	flag.Parse()
 	log.Printf("ServerAddress после flag.String")
 	log.Println(ServerAddress)
