@@ -16,9 +16,9 @@ type Config struct {
 
 var (
 	//port          = ":8080"
-	ServerAddress = "localhost" + ":8080"
+	ServerAddress = ":8080"
 	scheme        = "http"
-	BaseURL       = scheme + "://" + ServerAddress
+	BaseURL       = scheme + "://localhost" + ServerAddress
 )
 
 func main() {
@@ -56,7 +56,7 @@ func main() {
 	}
 	log.Printf("ServerAddress после LookupEnv")
 	log.Println(ServerAddress)
-	ServerAddress := flag.String(ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	ServerAddress := flag.String(ServerAddress, ":8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	flag.Parse()
 	log.Printf("*ServerAddress после flag.String")
 	log.Println(*ServerAddress)
