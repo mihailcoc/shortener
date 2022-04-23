@@ -23,18 +23,21 @@ var (
 
 func main() {
 	// 1 вариант
+	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
+		ServerAddress = u
+	}
+	log.Printf("ServerAddress вначале")
+	log.Println(ServerAddress)
+
 	var cfg Config
 	err := env.Parse(&cfg)
 	if err != nil {
-		os.Setenv("SERVER_ADDRESS", ":8080")
-		ServerAddress = os.Getenv("ServerAddress")
+		log.Fatal(err)
 	}
-	{
-		log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
-		ServerAddress := cfg.ServerAddress
-		log.Println(ServerAddress)
-	}
-
+	log.Printf("cfg.ServerAddress: %s", cfg.ServerAddress)
+	ServerAddress := cfg.ServerAddress
+	log.Printf("ServerAddress после env.Parse")
+	log.Println(ServerAddress)
 	// 1 вариант
 
 	//os.Setenv("port", ":8080")
@@ -44,9 +47,11 @@ func main() {
 
 	//2 вариант
 	//os.Setenv("SERVER_ADDRESS", ":8080")
+	// попробовать
+	//os.Getenv("ServerAddress")
 	//log.Printf("Getenv ServerAddress")
 	//log.Println(ServerAddress)
-	//ServerAddress := flag.String("a", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	//ServerAddress := flag.String(ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	//flag.Parse()
 	//log.Println(*ServerAddress)
 	//if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
