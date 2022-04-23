@@ -16,7 +16,7 @@ type Config struct {
 
 var (
 	ServerAddress = "127.0.0.1:8080"
-	scheme        = "http"
+	scheme        = "http://"
 	BaseURL       = scheme + ServerAddress
 )
 
