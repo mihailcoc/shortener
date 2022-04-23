@@ -48,8 +48,8 @@ func main() {
 	//2 вариант
 	//os.Setenv("SERVER_ADDRESS", ":8080")
 	// попробовать
-	os.Getenv("ServerAddress")
-	log.Printf("Getenv ServerAddress")
+	//os.Getenv("ServerAddress")
+	log.Printf("ServerAddress")
 	log.Println(ServerAddress)
 	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
 		ServerAddress = u
