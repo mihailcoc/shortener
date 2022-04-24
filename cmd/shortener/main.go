@@ -6,14 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/caarlos0/env"
 	"github.com/gorilla/mux"
 )
-
-type Config struct {
-	ServerAddress string `env:"SERVER_ADDRESS" envDefault:"127.0.0.1:8080"`
-	BaseURL       string `env:"http://localhost:8080"`
-}
 
 var (
 	ServerAddress = "127.0.0.1:8080"
@@ -24,11 +18,7 @@ var (
 func main() {
 	// 1 вариант
 	log.Printf("ServerAddress вначале %s", ServerAddress)
-	var cfg Config
-	err := env.Parse(&cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
+
 	ServerAddress := cfg.ServerAddress
 	log.Printf("ServerAddress после env.Parse %s", ServerAddress)
 
