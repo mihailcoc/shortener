@@ -1,19 +1,49 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 
+	"github.com/caarlos0/env"
 	"github.com/gorilla/mux"
-	"github.com/mihailcoc/shortener/configs"
 )
+
+type Config struct {
+	ServerAddress string `env:"SERVER_ADDRESS" envDefault:"127.0.0.1:8080"`
+	BaseURL       string `env:"BASE_URL" envDefault:"http://localhost:8080"`
+}
 
 type server struct {
 	addr   string
-	config configs.Config
+	config Config
 }
 
-func New(addr string, config configs.Config) *server {
+func checkExists(f string) bool {
+	return flag.Lookup(f) == nil
+}
+
+func NewConfig() Config {
+	var cfg Config
+	err := env.Parse(&cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if checkExists("b") {
+		flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "BaseUrl")
+	}
+
+	if checkExists("a") {
+		flag.StringVar(&cfg.ServerAddress, "a", cfg.ServerAddress, "ServerAddress")
+	}
+
+	flag.Parse()
+
+	return cfg
+}
+
+func NewServer(addr string, config Config) *server {
 	return &server{
 		addr:   addr,
 		config: config,
@@ -21,19 +51,13 @@ func New(addr string, config configs.Config) *server {
 }
 
 func (s *server) Start() {
-	h := handlers.New(s.config)
+	h := main.NewServer(s.config)
 
 	router := mux.NewRouter()
 
-	//router.Use(mux.middleware.Logger)
-	//router.Use(mux.middleware.Recoverer)
-
-	router.Route("/", func(r mux.Router) {
-		router.Get("/{id}", h.Get)
-		router.Get("/", h.Get)
-		router.Post("/", h.Save)
-		router.Post("/api/shorten", h.SaveJSON)
-	})
+	router.HandleFunc("/{url}", handlerGet).Methods("GET")
+	router.HandleFunc("/", handlerPost).Methods("POST")
+	router.HandleFunc("/api/shorten", handlerPostAPI).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(s.addr, handlers.GzipHandle(router)))
 }
