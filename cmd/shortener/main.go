@@ -39,8 +39,7 @@ func main() {
 
 	flag.String(cfg.ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	flag.Parse()
-	log.Printf("ServerAddress после flag.String")
-	log.Println(ServerAddress)
+	log.Printf("ServerAddress после flag.String %s", ServerAddress)
 
 	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
 		ServerAddress = u
