@@ -20,6 +20,11 @@ const (
 	targetTag   = "json"
 )
 
+//  описываем структуру Handler в запросе на получение переменных окружения
+type Handler struct {
+	config Config
+}
+
 //  описываем структуру JSON в запросе - {"url":"<some_url>"}
 type jsonURLBody struct {
 	URL string `json:"url"`
@@ -30,7 +35,7 @@ type ResultURL struct {
 	Result string `json:"result"`
 }
 
-func handlerPost(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Получен post text/plain")
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -49,7 +54,7 @@ func handlerPost(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 }
 
-func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Получен post application/json")
 	jsonURL, err := io.ReadAll(r.Body) // считываем JSON из тела запроса
 	if err != nil {
@@ -114,7 +119,7 @@ func handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 }
 
-func handlerGet(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handlerGet(w http.ResponseWriter, r *http.Request) {
 	switch r.Header.Get("Content-Type") {
 	case "application/json":
 		log.Printf("Получен get application/json")

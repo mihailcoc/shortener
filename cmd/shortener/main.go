@@ -1,12 +1,7 @@
 package main
 
 import (
-	"flag"
 	"log"
-	"net/http"
-	"os"
-
-	"github.com/gorilla/mux"
 )
 
 var (
@@ -19,22 +14,22 @@ func main() {
 	// 1 вариант
 	log.Printf("ServerAddress вначале %s", ServerAddress)
 
-	ServerAddress := cfg.ServerAddress
-	log.Printf("ServerAddress после env.Parse %s", ServerAddress)
+	//ServerAddress := cfg.ServerAddress
+	//log.Printf("ServerAddress после env.Parse %s", ServerAddress)
 
 	//pflag.StringVarP(&ServerAddress, "SERVER_ADDRESS", "s", "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
 	//pflag.Parse()
 	//log.Printf("*ServerAddress после pflag.StringVarP")
 	//log.Println(&ServerAddress)
 
-	flag.String(cfg.ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
-	flag.Parse()
-	log.Printf("ServerAddress после flag.String %s", ServerAddress)
+	//flag.String(cfg.ServerAddress, "127.0.0.1:8000", "SERVER_ADDRESS - адрес для запуска HTTP-сервера")
+	//flag.Parse()
+	//log.Printf("ServerAddress после flag.String %s", ServerAddress)
 
-	if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
-		ServerAddress = u
-	}
-	log.Printf("ServerAddress после LookupEnv %s", ServerAddress)
+	//if u, f := os.LookupEnv("SERVER_ADDRESS"); f {
+	//	ServerAddress = u
+	//}
+	//log.Printf("ServerAddress после LookupEnv %s", ServerAddress)
 	// 1 вариант
 
 	//os.Setenv("SERVER_ADDRESS", ":8080")
@@ -75,16 +70,9 @@ func main() {
 	//log.Println(ServerAddress)
 	//3 вариант
 
-	router := mux.NewRouter()
+	c := NewConfig()
 
-	srv := http.Server{
-		Addr:    ServerAddress,
-		Handler: router,
-	}
+	serv := NewServer(c.ServerAddress, c)
 
-	// router handler / endpoints
-	router.HandleFunc("/{url}", handlerGet).Methods("GET")
-	router.HandleFunc("/", handlerPost).Methods("POST")
-	router.HandleFunc("/api/shorten", handlerPostAPI).Methods("POST")
-	log.Fatal(srv.ListenAndServe())
+	serv.Start()
 }
