@@ -86,7 +86,7 @@ func (h *Handler) handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	// парсим JSON и записываем результат в экземпляр структуры
 	err = json.Unmarshal([]byte(jsonURL), &jsonBody)
 	if err != nil {
-		//log.Printf("Распарсили JSON: %s", err)
+		log.Printf("Распарсили JSON: %s", err)
 	}
 	log.Printf("Распарсили JSON string(jsonBody.URL): %s", string(jsonBody.URL))
 
