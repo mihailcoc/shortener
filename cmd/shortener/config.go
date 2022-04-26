@@ -31,7 +31,9 @@ func NewConfig() Config {
 	if checkExists("a") {
 		flag.StringVar(&cfg.ServerAddress, "a", cfg.ServerAddress, "ServerAddress")
 	}
-
+	if checkExists("f") {
+		flag.StringVar(&cfg.FileStoragePath, "f", cfg.FileStoragePath, "FileStoragePath")
+	}
 	flag.Parse()
 
 	return cfg
