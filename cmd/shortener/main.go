@@ -1,18 +1,8 @@
 package main
 
-import (
-	"log"
-)
-
-var (
-	ServerAddress = "127.0.0.1:8080"
-	scheme        = "http://"
-	BaseURL       = scheme + ServerAddress
-)
-
 func main() {
 	// 1 вариант
-	log.Printf("ServerAddress вначале %s", ServerAddress)
+	//log.Printf("ServerAddress вначале %s", ServerAddress)
 
 	//ServerAddress := cfg.ServerAddress
 	//log.Printf("ServerAddress после env.Parse %s", ServerAddress)
@@ -74,5 +64,5 @@ func main() {
 
 	serv := NewServer(c.ServerAddress, c)
 
-	serv.Start()
+	serv.StartServer()
 }

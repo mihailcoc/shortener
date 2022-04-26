@@ -19,7 +19,7 @@ func NewServer(addr string, config Config) *server {
 	}
 }
 
-func (s *server) Start() {
+func (s *server) StartServer() {
 	h := NewHandler(s.config)
 
 	router := mux.NewRouter()
@@ -27,6 +27,7 @@ func (s *server) Start() {
 	router.HandleFunc("/{url}", h.handlerGet).Methods("GET")
 	router.HandleFunc("/", h.handlerPost).Methods("POST")
 	router.HandleFunc("/api/shorten", h.handlerPostAPI).Methods("POST")
-
+	log.Printf("ServerAddress перед запуском сервера %s", h.config.ServerAddress)
 	log.Fatal(http.ListenAndServe(s.addr, GzipHandle(router)))
+
 }
