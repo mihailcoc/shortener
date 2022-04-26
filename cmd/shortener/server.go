@@ -28,6 +28,7 @@ func (s *server) StartServer() {
 	router.HandleFunc("/", h.handlerPost).Methods("POST")
 	router.HandleFunc("/api/shorten", h.handlerPostAPI).Methods("POST")
 	log.Printf("ServerAddress перед запуском сервера %s", h.config.ServerAddress)
+	log.Printf("FileStoragePath перед запуском сервера %s", h.config.FileStoragePath)
 	log.Fatal(http.ListenAndServe(s.addr, GzipHandle(router)))
 
 }
