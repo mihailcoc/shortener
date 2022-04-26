@@ -28,5 +28,5 @@ func (s *server) Start() {
 	router.HandleFunc("/", h.handlerPost).Methods("POST")
 	router.HandleFunc("/api/shorten", h.handlerPostAPI).Methods("POST")
 
-	log.Fatal(http.ListenAndServe(s.addr, handlers.GzipHandle(router)))
+	log.Fatal(http.ListenAndServe(s.addr, GzipHandle(router)))
 }

@@ -13,6 +13,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var (
+	urls = make(map[string]string)
+)
+
 // тег, значение которого нужно получить
 // имя поля, о котором нужно получить информацию.
 const (
@@ -22,7 +26,8 @@ const (
 
 //  описываем структуру Handler в запросе на получение переменных окружения
 type Handler struct {
-	config Config
+	storage Repository
+	config  Config
 }
 
 //  описываем структуру JSON в запросе - {"url":"<some_url>"}
@@ -33,6 +38,19 @@ type jsonURLBody struct {
 //  описываем структуру создаваемого JSON вида {"result":"<shorten_url>"}
 type ResultURL struct {
 	Result string `json:"result"`
+}
+
+func NewHandler(c Config) *Handler {
+	h := &Handler{
+		storage: NewStorage(),
+		config:  c,
+	}
+
+	if err := h.storage.Load(h.config); err != nil {
+		panic(err)
+	}
+
+	return h
 }
 
 func (h *Handler) handlerPost(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +86,7 @@ func (h *Handler) handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	// парсим JSON и записываем результат в экземпляр структуры
 	err = json.Unmarshal([]byte(jsonURL), &jsonBody)
 	if err != nil {
-		log.Printf("Распарсили JSON: %s", err)
+		//log.Printf("Распарсили JSON: %s", err)
 	}
 	log.Printf("Распарсили JSON string(jsonBody.URL): %s", string(jsonBody.URL))
 
