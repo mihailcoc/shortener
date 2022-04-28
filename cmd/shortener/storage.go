@@ -54,13 +54,13 @@ func (s *storage) LinkBy(sl string) (string, error) {
 	return link, nil
 }
 
-func (s *storage) Save(url string) (sl string) {
+func (s *storage) Save(url string) (mKey string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	// По ключу помещаем значение localhost map.
+	mKey = string(randomString(len(url) / 4))
 
-	sl = string(randomString(10))
-
-	s.Data[sl] = url
+	s.Data[mKey] = url
 	return
 }
 

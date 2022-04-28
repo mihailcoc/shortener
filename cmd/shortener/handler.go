@@ -60,14 +60,15 @@ func (h *Handler) handlerPost(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	log.Printf("Получено тело запроса: %s", body)
-	// По ключу помещаем значение localhost map.
-	mKey := randomString(len(body) / 4)
 
-	urls[mKey] = string(body)
+	origin := string(body)
 
-	response := fmt.Sprintf("%s/%s", h.config.BaseURL, mKey)
+	short := string(h.storage.Save(origin))
+
+	defer h.storage.Flush(h.config)
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
+	response := fmt.Sprintf("%s/%s", h.config.BaseURL, short)
 	w.Write([]byte(response))
 	defer r.Body.Close()
 }
@@ -112,26 +113,28 @@ func (h *Handler) handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Распарсили JSON tagValue: %s jsonBody.URL: %s string(jsonBody.URL): %s", tagValue, jsonBody.URL, string(jsonBody.URL))
 
 	// По ключу помещаем значение localhost map.
-	mKey := randomString(len(string(jsonBody.URL)) / 4)
-	log.Printf("Получен mKey: %s", mKey)
+	sl := h.storage.Save(jsonBody.URL)
 
-	urls[mKey] = string(jsonBody.URL)
-	shortURL := fmt.Sprintf("%s/%s", h.config.BaseURL, mKey)
+	defer h.storage.Flush(h.config)
+
+	shortURL := fmt.Sprintf("%s/%s", h.config.BaseURL, string(sl))
+
 	log.Printf("Получен shortURL: %s", shortURL)
 
 	// создаем экземпляр структуры и вставляем в него короткий URL для отправки в JSON
 	resultURL := ResultURL{
 		Result: shortURL,
 	}
+
+	// Respond with JSON
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	// изготавливаем JSON
 	shortJSONURL, err := json.Marshal(resultURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Printf("Получен shortJSONURL: %s", shortJSONURL)
-	// Respond with JSON
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
 	//w.Write(shortJSONURL)
 	w.Write([]byte(shortJSONURL))
 	defer r.Body.Close()
@@ -180,13 +183,19 @@ func (h *Handler) handlerGet(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(`url := `, key)
 		keykey := strings.TrimPrefix(r.URL.Path, "/")
 		log.Printf("Получен key %s", keykey)
-		if url, ok := urls[key]; ok {
-			log.Printf("Отдаем url %s", url)
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			w.Header().Set("Location", url)
-			w.WriteHeader(http.StatusTemporaryRedirect)
-			defer r.Body.Close()
+		url, err := h.storage.LinkBy(key)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
 		}
+		http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+		//if url, ok := urls[key]; ok {
+		//	log.Printf("Отдаем url %s", url)
+		//	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		//	w.Header().Set("Location", url)
+		//	w.WriteHeader(http.StatusTemporaryRedirect)
+		//	defer r.Body.Close()
+		//}
 	}
 
 }
