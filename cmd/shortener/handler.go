@@ -146,32 +146,36 @@ func (h *Handler) handlerGet(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Получен get application/json")
 		jsonURL := strings.TrimPrefix(r.URL.Path, "/")
 		log.Printf("Получен key %s", jsonURL)
-		// создаеём экземпляр структуры для заполнения из JSON
+		// создаём экземпляр структуры для заполнения из JSON
 		jsonBody := jsonURLBody{}
 
 		// парсим JSON и записываем результат в экземпляр структуры
 		if err := json.Unmarshal([]byte(jsonURL), &jsonBody); err != nil {
 			log.Printf("Распарсили JSON: %s", err)
 		}
-		if url, ok := urls[jsonURL]; ok {
-			log.Printf("Отдаем url %s", url)
-			// создаем экземпляр структуры и вставляем в него короткий URL для отправки в JSON
-			resultURL := ResultURL{
-				Result: url,
-			}
-			// изготавливаем JSON
-			longJSONURL, err := json.Marshal(resultURL)
-			if err != nil {
-				log.Fatal(err)
-			}
-			log.Printf("Получен shortJSONURL: %s", longJSONURL)
-			// Respond with JSON
-			w.Header().Set("Content-Type", "application/json")
-			w.Header().Set("Location", string(longJSONURL))
-			w.WriteHeader(http.StatusTemporaryRedirect)
-			w.Write([]byte(longJSONURL))
-			defer r.Body.Close()
+		url, err := h.storage.LinkBy(jsonURL)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
 		}
+
+		// создаем экземпляр структуры и вставляем в него короткий URL для отправки в JSON
+		resultURL := ResultURL{
+			Result: url,
+		}
+		// изготавливаем JSON
+		longJSONURL, err := json.Marshal(resultURL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("Получен shortJSONURL: %s", longJSONURL)
+		// Respond with JSON
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Location", string(longJSONURL))
+		w.WriteHeader(http.StatusTemporaryRedirect)
+		w.Write([]byte(longJSONURL))
+		defer r.Body.Close()
+		//}
 	default:
 		log.Printf("%s %q", r.Method, html.EscapeString(r.URL.Path))
 		log.Printf("Получен get text/html")
@@ -189,13 +193,7 @@ func (h *Handler) handlerGet(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		http.Redirect(w, r, url, http.StatusTemporaryRedirect)
-		//if url, ok := urls[key]; ok {
-		//	log.Printf("Отдаем url %s", url)
-		//	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		//	w.Header().Set("Location", url)
-		//	w.WriteHeader(http.StatusTemporaryRedirect)
-		//	defer r.Body.Close()
-		//}
+
 	}
 
 }
