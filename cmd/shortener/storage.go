@@ -45,7 +45,7 @@ type consumer struct {
 func (s *storage) LinkBy(sl string) (string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-
+	// По ключу достаём значение в Data map.
 	link, ok := s.Data[sl]
 	if !ok {
 		return link, errors.New("url not found")
@@ -57,14 +57,15 @@ func (s *storage) LinkBy(sl string) (string, error) {
 func (s *storage) Save(url string) (mKey string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	// По ключу помещаем значение localhost map.
+	// Генерируем короткий url.
 	mKey = string(randomString(len(url) / 4))
-
+	// Сохраняем короткий url.
 	s.Data[mKey] = url
 	return
 }
 
 func NewProducer(filename string) (*producer, error) {
+	// Открываем и записываем файл.
 	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
 
 	if err != nil {
@@ -79,6 +80,7 @@ func NewProducer(filename string) (*producer, error) {
 }
 
 func NewConsumer(filename string) (*consumer, error) {
+	// Открываем и читаем файл.
 	file, err := os.OpenFile(filename, os.O_CREATE|os.O_RDONLY, 0777)
 
 	if err != nil {
@@ -104,7 +106,7 @@ func (s *storage) Load(c Config) error {
 	if c.FileStoragePath == "" {
 		return nil
 	}
-
+	// Загружаем данные из файла
 	cns, err := NewConsumer(c.FileStoragePath)
 
 	if err != nil {
@@ -120,7 +122,7 @@ func (s *storage) Flush(c Config) error {
 	if c.FileStoragePath == "" {
 		return nil
 	}
-
+	// Загружаем данные из файла
 	p, err := NewProducer(c.FileStoragePath)
 
 	if err != nil {

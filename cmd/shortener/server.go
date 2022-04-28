@@ -20,8 +20,9 @@ func NewServer(addr string, config Config) *server {
 }
 
 func (s *server) StartServer() {
+	// Создаем новый handler с переменными окружения.
 	h := NewHandler(s.config)
-
+	// Создаем новый роутер.
 	router := mux.NewRouter()
 
 	router.HandleFunc("/{url}", h.handlerGet).Methods("GET")
