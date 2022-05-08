@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"io"
@@ -7,7 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mihailcoc/shortener/cmd/shortener/config"
+	"github.com/mihailcoc/shortener/cmd/shortener/configs"
+	"github.com/mihailcoc/shortener/internal/app/handler"
 )
 
 var (
@@ -16,8 +17,8 @@ var (
 )
 
 func Test_handlerPost(t *testing.T) {
-	c := config.NewConfig()
-	h := NewHandler(c)
+	c := configs.NewConfig()
+	h := handler.NewHandler(c)
 
 	type args struct {
 		w http.ResponseWriter
@@ -63,7 +64,7 @@ func Test_handlerPost(t *testing.T) {
 			// создаём новый Recorder
 			recorder := httptest.NewRecorder()
 			// определяем хендлер
-			h := http.HandlerFunc(h.handlerPost)
+			h := http.HandlerFunc(h.HandlerPost)
 			// запускаем сервер
 			h.ServeHTTP(http.ResponseWriter(recorder), request)
 			res := recorder.Result()
@@ -90,8 +91,8 @@ func Test_handlerPost(t *testing.T) {
 }
 
 func Test_handlerPostAPI(t *testing.T) {
-	c := config.NewConfig()
-	h := NewHandler(c)
+	c := configs.NewConfig()
+	h := handler.NewHandler(c)
 
 	type want struct {
 		code        int
@@ -142,7 +143,7 @@ func Test_handlerPostAPI(t *testing.T) {
 			// задаем статус
 			w.WriteHeader(http.StatusCreated)
 			// определяем хендлер
-			h := http.HandlerFunc(h.handlerPostAPI)
+			h := http.HandlerFunc(h.HandlerPostAPI)
 			// запускаем сервер
 			h.ServeHTTP(w, request)
 			res := w.Result()
@@ -169,8 +170,8 @@ func Test_handlerPostAPI(t *testing.T) {
 }
 
 func Test_handlerGet(t *testing.T) {
-	c := config.NewConfig()
-	h := NewHandler(c)
+	c := configs.NewConfig()
+	h := handler.NewHandler(c)
 
 	type want struct {
 		code        int
@@ -215,7 +216,7 @@ func Test_handlerGet(t *testing.T) {
 			request := httptest.NewRequest(tt.request.method, tt.request.target, nil)
 
 			// определяем хендлер
-			h := http.HandlerFunc(h.handlerGet)
+			h := http.HandlerFunc(h.HandlerGet)
 			// запускаем сервер
 			h.ServeHTTP(w, request)
 			res := w.Result()

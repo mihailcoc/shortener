@@ -24,7 +24,7 @@ func TestRandomString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := randomString(tt.args.len); len(got) == tt.want {
+			if got := RandomString(tt.args.len); len(got) == tt.want {
 				t.Errorf("RandomString() = %v, want %v", len(got), tt.want)
 			}
 		})

@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/mihailcoc/shortener/cmd/shortener/config"
+	"github.com/mihailcoc/shortener/cmd/shortener/configs"
+	"github.com/mihailcoc/shortener/internal/app/servers"
 )
 
 func main() {
 	// Загружаем переменные окружения.
-	c := config.NewConfig()
+	c := configs.NewConfig()
 	// Формирует структуру для старта сервера
-	serv := NewServer(c.ServerAddress, c)
+	serv := servers.NewServer(c.ServerAddress, c)
 
 	serv.StartServer()
 }

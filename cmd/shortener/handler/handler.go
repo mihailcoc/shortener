@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/mihailcoc/shortener/cmd/shortener/config"
-	"github.com/mihailcoc/shortener/internal/app/storage"
+	"github.com/mihailcoc/shortener/cmd/shortener/configs"
+	"github.com/mihailcoc/shortener/cmd/shortener/storage"
 )
 
 var (
@@ -29,7 +29,7 @@ const (
 //  описываем структуру Handler в запросе на получение переменных окружения
 type Handler struct {
 	storage storage.Repository
-	config  config.Config
+	config  configs.Config
 }
 
 //  описываем структуру JSON в запросе - {"url":"<some_url>"}
@@ -42,7 +42,7 @@ type ResultURL struct {
 	Result string `json:"result"`
 }
 
-func NewHandler(c config.Config) *Handler {
+func NewHandler(c configs.Config) *Handler {
 	h := &Handler{
 		storage: storage.NewStorage(),
 		config:  c,
@@ -55,7 +55,7 @@ func NewHandler(c config.Config) *Handler {
 	return h
 }
 
-func (h *Handler) handlerPost(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Получен post text/plain")
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -75,7 +75,7 @@ func (h *Handler) handlerPost(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 }
 
-func (h *Handler) handlerPostAPI(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Получен post application/json")
 	jsonURL, err := io.ReadAll(r.Body) // считываем JSON из тела запроса
 	if err != nil {
@@ -142,7 +142,7 @@ func (h *Handler) handlerPostAPI(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 }
 
-func (h *Handler) handlerGet(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandlerGet(w http.ResponseWriter, r *http.Request) {
 	switch r.Header.Get("Content-Type") {
 	case "application/json":
 		log.Printf("Получен get application/json")
