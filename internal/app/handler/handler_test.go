@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"io"
@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/mihailcoc/shortener/cmd/shortener/configs"
-	"github.com/mihailcoc/shortener/internal/app/handler"
 )
 
 var (
@@ -18,7 +17,7 @@ var (
 
 func Test_handlerPost(t *testing.T) {
 	c := configs.NewConfig()
-	h := handler.NewHandler(c)
+	h := NewHandler(c)
 
 	type args struct {
 		w http.ResponseWriter
@@ -92,7 +91,7 @@ func Test_handlerPost(t *testing.T) {
 
 func Test_handlerPostAPI(t *testing.T) {
 	c := configs.NewConfig()
-	h := handler.NewHandler(c)
+	h := NewHandler(c)
 
 	type want struct {
 		code        int
@@ -118,7 +117,7 @@ func Test_handlerPostAPI(t *testing.T) {
 			want: want{
 				code: 201,
 				//response:    "http://127.0.0.1:8080/pgatlmo",
-				response:    "{\"result\":\"http://localhost:8080/pgatlmo\"}",
+				response:    "{\"result\":\"http://localhost:8080/gmwjgsa\"}",
 				contentType: "application/json",
 			},
 			request: request{
@@ -171,7 +170,7 @@ func Test_handlerPostAPI(t *testing.T) {
 
 func Test_handlerGet(t *testing.T) {
 	c := configs.NewConfig()
-	h := handler.NewHandler(c)
+	h := NewHandler(c)
 
 	type want struct {
 		code        int
