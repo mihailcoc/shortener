@@ -11,6 +11,8 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/mihailcoc/shortener/cmd/shortener/config"
+	"github.com/mihailcoc/shortener/internal/app/storage"
 )
 
 var (
@@ -26,8 +28,8 @@ const (
 
 //  описываем структуру Handler в запросе на получение переменных окружения
 type Handler struct {
-	storage Repository
-	config  Config
+	storage storage.Repository
+	config  config.Config
 }
 
 //  описываем структуру JSON в запросе - {"url":"<some_url>"}
@@ -40,9 +42,9 @@ type ResultURL struct {
 	Result string `json:"result"`
 }
 
-func NewHandler(c Config) *Handler {
+func NewHandler(c config.Config) *Handler {
 	h := &Handler{
-		storage: NewStorage(),
+		storage: storage.NewStorage(),
 		config:  c,
 	}
 

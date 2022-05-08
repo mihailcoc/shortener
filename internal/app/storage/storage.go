@@ -6,13 +6,15 @@ import (
 	"errors"
 	"os"
 	"sync"
+
+	"github.com/mihailcoc/shortener/cmd/shortener/config"
 )
 
 type Repository interface {
 	LinkBy(sl string) (string, error)
 	Save(url string) (sl string)
-	Load(c Config) error
-	Flush(c Config) error
+	Load(c config.Config) error
+	Flush(c config.Config) error
 }
 
 type Producer interface {
@@ -58,7 +60,7 @@ func (s *storage) Save(url string) (mKey string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	// Генерируем короткий url.
-	mKey = string(randomString(len(url) / 4))
+	mKey = string(service.randomString(len(url) / 4))
 	// Сохраняем короткий url.
 	s.Data[mKey] = url
 	return
@@ -102,7 +104,7 @@ func (p *consumer) Close() error {
 	return p.file.Close()
 }
 
-func (s *storage) Load(c Config) error {
+func (s *storage) Load(c config.Config) error {
 	if c.FileStoragePath == "" {
 		return nil
 	}
@@ -118,7 +120,7 @@ func (s *storage) Load(c Config) error {
 	return nil
 }
 
-func (s *storage) Flush(c Config) error {
+func (s *storage) Flush(c config.Config) error {
 	if c.FileStoragePath == "" {
 		return nil
 	}

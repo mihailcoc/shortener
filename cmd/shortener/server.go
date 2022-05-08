@@ -5,14 +5,15 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/mihailcoc/shortener/cmd/shortener/config"
 )
 
 type server struct {
 	addr   string
-	config Config
+	config config.Config
 }
 
-func NewServer(addr string, config Config) *server {
+func NewServer(addr string, config config.Config) *server {
 	return &server{
 		addr:   addr,
 		config: config,

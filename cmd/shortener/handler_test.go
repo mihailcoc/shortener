@@ -6,6 +6,8 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/mihailcoc/shortener/cmd/shortener/config"
 )
 
 var (
@@ -14,7 +16,7 @@ var (
 )
 
 func Test_handlerPost(t *testing.T) {
-	c := NewConfig()
+	c := config.NewConfig()
 	h := NewHandler(c)
 
 	type args struct {
@@ -88,7 +90,7 @@ func Test_handlerPost(t *testing.T) {
 }
 
 func Test_handlerPostAPI(t *testing.T) {
-	c := NewConfig()
+	c := config.NewConfig()
 	h := NewHandler(c)
 
 	type want struct {
@@ -167,7 +169,7 @@ func Test_handlerPostAPI(t *testing.T) {
 }
 
 func Test_handlerGet(t *testing.T) {
-	c := NewConfig()
+	c := config.NewConfig()
 	h := NewHandler(c)
 
 	type want struct {
