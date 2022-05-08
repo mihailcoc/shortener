@@ -1,5 +1,12 @@
 package main
 
+import
+
+"github.com/mihailcoc/shortener/cmd/shortener/config"
+"github.com/mihailcoc/shortener/cmd/shortener/handler"
+"github.com/mihailcoc/shortener/internal/app/server"
+"github.com/mihailcoc/shortener/internal/app/storage"
+
 func main() {
 	// Загружаем переменные окружения.
 	c := NewConfig()
