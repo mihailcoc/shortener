@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/mihailcoc/shortener/cmd/shortener/configs"
-	"github.com/mihailcoc/shortener/cmd/shortener/service"
+	"github.com/mihailcoc/shortener/internal/app/service"
 )
 
 type Repository interface {
