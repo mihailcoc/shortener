@@ -198,7 +198,7 @@ func Test_handlerGet(t *testing.T) {
 			},
 			request: request{
 				method: http.MethodGet,
-				target: "http://localhost:8080/pgatlmo",
+				target: "http://localhost:8080/gmwjgsa",
 				path:   "/{id}",
 			},
 		},
