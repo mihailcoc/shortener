@@ -31,6 +31,7 @@ func (s *server) StartServer() {
 	router.HandleFunc("/{url}", h.HandlerGet).Methods("GET")
 	router.HandleFunc("/", h.HandlerPost).Methods("POST")
 	router.HandleFunc("/api/shorten", h.HandlerPostAPI).Methods("POST")
+	router.HandleFunc("/api/user/urls", h.GetUserURLs).Methods("GET")
 
 	log.Printf("Сервер запущен")
 	//log.Printf("FileStoragePath перед запуском сервера %s", h.config.FileStoragePath)
