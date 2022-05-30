@@ -9,12 +9,6 @@ type Config struct {
 	BaseURL       string `env:"localhost:8080"`
 }
 
-var (
-	addr    = "localhost:8080"
-	scheme  = "http"
-	baseURL = scheme + "://" + addr
-)
-
 func main() {
 	server := gin.Default()
 	server.GET(
