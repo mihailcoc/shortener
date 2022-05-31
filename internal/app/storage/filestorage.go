@@ -231,3 +231,8 @@ func FileRepository(ctx context.Context, filePath string, baseURL string) *Repos
 func NewFileRepository(ctx context.Context, filePath string, baseURL string) handler.Repository {
 	return handler.Repository(FileRepository(ctx, filePath, baseURL))
 }
+
+// функция принимающая в теле запроса множество URL для сокращения
+func (repo *Repository) AddMultipleURLs(ctx context.Context, user model.UserID, urls ...handler.RequestGetURLs) ([]handler.ResponseGetURLs, error) {
+	return nil, nil
+}

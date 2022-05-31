@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/mihailcoc/shortener/internal/app/model"
@@ -33,6 +35,8 @@ type Repository interface {
 	GetUserURLs(ctx context.Context, user model.UserID) ([]ResponseGetURL, error)
 	// интерфейс для проверки связи с DB
 	Ping(ctx context.Context) error
+	// интерфейс для добавления множества URL
+	AddMultipleURLs(ctx context.Context, user model.UserID, urls ...RequestGetURLs) ([]ResponseGetURLs, error)
 }
 
 //  описываем структуру Handler в запросе на получение данных их репозитория
@@ -289,4 +293,54 @@ func (h *Handler) PingDB(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) CreateBatch(w http.ResponseWriter, r *http.Request) {
+	//Используем конструкцию отложенного исполнения defer, чтобы закрыть соединение и освободить ресурс
+	defer r.Body.Close()
+	// определяем переменную data
+	var data []RequestGetURLs
+	// получаем из контекста запроса, значение userID
+	userIDCtx := r.Context().Value(mw.UserIDCtxName)
+	// определяем дефолное значение userID
+	userID := "default"
+	// если полученное из контекста запроса, значение userID не равно нулю то присваиваем переменной userID
+	if userIDCtx != nil {
+		userID = userIDCtx.(string)
+	}
+	// считываем JSON из тела запроса
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	// переводим из формата JSON
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	// получаем часть URL пользователя через интерфейс для получения части URL
+	urls, err := h.repo.AddMultipleURLs(r.Context(), userID, data...)
+	if err != nil {
+		log.Println("err.Error(): ", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	body, err = json.Marshal(urls)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json; charset=utf-8")
+
+	w.WriteHeader(http.StatusCreated)
+
+	_, err = w.Write(body)
+	if err != nil {
+		http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
+		return
+	}
 }
