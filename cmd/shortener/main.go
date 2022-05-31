@@ -10,7 +10,6 @@ import (
 
 	"github.com/mihailcoc/shortener/cmd/shortener/configs"
 	"github.com/mihailcoc/shortener/cmd/shortener/router"
-	"github.com/mihailcoc/shortener/internal/app/handler"
 	"github.com/mihailcoc/shortener/internal/app/servers"
 	"github.com/mihailcoc/shortener/internal/app/storage"
 	"golang.org/x/sync/errgroup"
@@ -28,10 +27,10 @@ func main() {
 
 	cfg := configs.NewConfig()
 
-	var repo handler.Repository
+	//var repo handler.Repository
 
-	// Если переменная бд задана то создаём файловый репозиторий.
-	repo = storage.NewFileRepository(ctx, cfg.FileStoragePath, cfg.BaseURL)
+	// Создаём файловый репозиторий.
+	repo := storage.NewFileRepository(ctx, cfg.FileStoragePath, cfg.BaseURL)
 
 	g, ctx := errgroup.WithContext(ctx)
 
