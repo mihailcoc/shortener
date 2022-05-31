@@ -1,25 +1,67 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/mihailcoc/shortener/cmd/shortener/configs"
+	"github.com/mihailcoc/shortener/cmd/shortener/router"
+	"github.com/mihailcoc/shortener/internal/app/handler"
+	"github.com/mihailcoc/shortener/internal/app/servers"
+	"github.com/mihailcoc/shortener/internal/app/storage"
+	"golang.org/x/sync/errgroup"
 )
 
-type Config struct {
-	ServerAddress string `env:"localhost:8080"`
-	BaseURL       string `env:"localhost:8080"`
-}
-
 func main() {
-	server := gin.Default()
-	server.GET(
-		"/:key",
-		handlerGet,
-	)
-	server.GET(
-		"/api/shorten:key",
-		handlerGetAPI,
-	)
-	server.POST("/", handlerPost)
-	server.POST("/api/shorten", handlerPostAPI)
-	server.Run(addr)
+	var httpServer *servers.CustomServer
+	// инициируем контекст
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+	defer signal.Stop(interrupt)
+
+	cfg := configs.NewConfig()
+
+	var repo handler.Repository
+
+	// Если переменная бд задана то создаём файловый репозиторий.
+	repo = storage.NewFileRepository(ctx, cfg.FileStoragePath, cfg.BaseURL)
+
+	g, ctx := errgroup.WithContext(ctx)
+
+	handler := router.NewRouter(repo, cfg)
+	// Запускаем функцию с контекстом errgroup.WithContext(ctx)
+	g.Go(func() error {
+		//Создаем новый сервер
+		httpServer = servers.NewServer(cfg.ServerAddress, cfg.Key, handler)
+		//Запускаем новый сервер
+		err := httpServer.StartServer()
+		if err != nil {
+			return err
+		}
+
+		log.Printf("httpServer starting at: %v", cfg.ServerAddress)
+
+		return nil
+	})
+
+	select {
+	case <-interrupt:
+		break
+	case <-ctx.Done():
+		break
+	}
+	log.Println("Receive shutdown signal")
+	_ = httpServer.Shutdown()
+	// Выводим сообщение после остановки сервера
+	err := g.Wait()
+	if err != nil {
+		log.Printf("server returning an error: %v", err)
+		os.Exit(2)
+	}
 }

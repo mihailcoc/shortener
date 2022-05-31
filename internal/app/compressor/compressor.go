@@ -1,4 +1,4 @@
-ackage compressor
+package compressor
 
 import (
 	"compress/gzip"
