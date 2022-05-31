@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/mihailcoc/shortener/cmd/shortener/configs"
+	db "github.com/mihailcoc/shortener/cmd/shortener/database"
 	"github.com/mihailcoc/shortener/cmd/shortener/router"
+	"github.com/mihailcoc/shortener/internal/app/handler"
 	"github.com/mihailcoc/shortener/internal/app/servers"
 	"github.com/mihailcoc/shortener/internal/app/storage"
 	"golang.org/x/sync/errgroup"
@@ -27,8 +29,26 @@ func main() {
 
 	cfg := configs.NewConfig()
 
-	// Создаём файловый репозиторий.
-	repo := storage.NewFileRepository(ctx, cfg.FileStoragePath, cfg.BaseURL)
+	var repo handler.Repository
+	// Если переменная бд не задана.
+	if cfg.DatabaseDSN != "" {
+		// Создаём соединение в бд
+		conn, err := db.Conn("postgres", cfg.DatabaseDSN)
+		if err != nil {
+			log.Printf("Unable to connect to the database: %s", err.Error())
+		}
+		// Создаём бд
+		err = db.SetUpDataBase(ctx, conn)
+
+		if err != nil {
+			log.Printf("Unable to create database struct: %s", err.Error())
+		}
+		// Создаём репозиторий бд
+		repo = storage.NewDatabaseRepository(cfg.BaseURL, conn)
+	} else {
+		// Если переменная бд задана то создаём файловый репозиторий.
+		repo = storage.NewFileRepository(ctx, cfg.FileStoragePath, cfg.BaseURL)
+	}
 
 	g, ctx := errgroup.WithContext(ctx)
 

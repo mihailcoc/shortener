@@ -52,6 +52,18 @@ type ResponseGetURL struct {
 	OriginalURL string `json:"original_url"`
 }
 
+//  описываем структуру создаваемого запроса JSON вида {"CorrelationID":"<correlation_id>", "OriginalURL":"<original_url>"}
+type RequestGetURLs struct {
+	CorrelationID string `json:"correlation_id"`
+	OriginalURL   string `json:"original_url"`
+}
+
+//  описываем структуру создаваемого ответа JSON вида {"CorrelationID":"<correlation_id>", "ShortURL":"<short_url>"}
+type ResponseGetURLs struct {
+	CorrelationID string `json:"correlation_id"`
+	ShortURL      string `json:"short_url"`
+}
+
 // описываем структуру ошибки
 type ErrorWithDB struct {
 	Err   error
@@ -61,6 +73,19 @@ type ErrorWithDB struct {
 // Error добавляет поддержку интерфейса error для типа ErrorWithDB.
 func (err *ErrorWithDB) Error() string {
 	return fmt.Sprintf("%v", err.Err)
+}
+
+// Unwrap добавляет поддержку интерфейса error для типа ErrorWithDB.
+func (err *ErrorWithDB) Unwrap() error {
+	return err.Err
+}
+
+// NewErrorWithDB упаковывает ошибку err в тип ErrorWithDB c текущим временем.
+func NewErrorWithDB(err error, title string) error {
+	return &ErrorWithDB{
+		Err:   err,
+		Title: title,
+	}
 }
 
 //  описываем новый handler
