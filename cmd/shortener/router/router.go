@@ -19,6 +19,7 @@ func NewRouter(repo handler.Repository, cfg configs.Config) *chi.Mux {
 	// определяем связку хендлеров и адресов
 	router.Route("/", func(r chi.Router) {
 		router.Post("/", h.CreateShortURL)
+		router.Get("/{id}", h.RetrieveShortURL)
 		router.Post("/api/shorten", h.ShortenURL)
 		router.Get("/api/user/urls", h.GetUserURLs)
 		router.Get("/ping", h.PingDB)

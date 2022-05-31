@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-chi/chi"
 	"github.com/mihailcoc/shortener/internal/app/model"
 	"github.com/mihailcoc/shortener/internal/app/mw"
 	"github.com/mihailcoc/shortener/internal/app/shorturl"
@@ -248,6 +249,36 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
 		return
 	}
+}
+
+func (h *Handler) RetrieveShortURL(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "only GET requests are allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		http.Error(w, "the parameter is missing", http.StatusBadRequest)
+		return
+	}
+
+	url, err := h.repo.GetURL(r.Context(), id)
+	if err != nil {
+		var dbErr *ErrorWithDB
+
+		if errors.As(err, &dbErr) && dbErr.Title == "deleted" {
+			w.WriteHeader(http.StatusGone)
+			return
+		}
+
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Add("Location", url)
+
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 // описываем хэндлер получающий все URL созданные пользователем
