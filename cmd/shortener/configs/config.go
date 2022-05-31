@@ -5,11 +5,12 @@ import (
 	"log"
 
 	"github.com/caarlos0/env"
+	"github.com/mihailcoc/shortener/internal/app/service"
 )
 
 // Создаем структуру для загрузки переменных окружения.
 type Config struct {
-	ServerAddress   string `env:"SERVER_ADDRESS" envDefault:"127.0.0.1:8080"`
+	ServerAddress   string `env:"SERVER_ADDRESS" envDefault:":8080"`
 	BaseURL         string `env:"BASE_URL" envDefault:"http://localhost:8080"`
 	FileStoragePath string `env:"FILE_STORAGE_PATH" envDefault:"storage.json"`
 	DatabaseDSN     string `env:"DATABASE_DSN"`
@@ -22,11 +23,21 @@ func checkExists(f string) bool {
 
 // Задаём функцию новых конфигураций
 func NewConfig() Config {
+
 	var cfg Config
-	err := env.Parse(&cfg)
+
+	random, err := service.GenerateRandom(16)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	cfg.Key = random
+
+	err = env.Parse(&cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Задаем флаг для b переменной окружения URL
 	if checkExists("b") {
 		flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "BaseUrl")

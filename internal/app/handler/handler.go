@@ -102,6 +102,7 @@ func NewHandler(repo Repository, baseURL string) *Handler {
 
 //  описываем новый handler по созданию короткого URL.
 func (h *Handler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
+	log.Printf("CreateShortURL")
 	//Используем конструкцию отложенного исполнения defer, чтобы закрыть соединение и освободить ресурс
 	defer r.Body.Close()
 	// читаем тело запроса
