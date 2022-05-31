@@ -31,6 +31,8 @@ type Repository interface {
 	GetURL(ctx context.Context, shortURL model.ShortURL) (model.ShortURL, error)
 	// интерфейс для получения URL созданных пользователем
 	GetUserURLs(ctx context.Context, user model.UserID) ([]ResponseGetURL, error)
+	// интерфейс для проверки связи с DB
+	Ping(ctx context.Context) error
 }
 
 //  описываем структуру Handler в запросе на получение данных их репозитория
@@ -252,4 +254,14 @@ func (h *Handler) GetUserURLs(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func (h *Handler) PingDB(w http.ResponseWriter, r *http.Request) {
+	// проверяем связь с бд через интерфейс для проверки связи с DB
+	err := h.repo.Ping(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

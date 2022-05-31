@@ -21,6 +21,7 @@ func NewRouter(repo handler.Repository, cfg configs.Config) *chi.Mux {
 		router.Post("/", h.CreateShortURL)
 		router.Post("/api/shorten", h.ShortenURL)
 		router.Get("/api/user/urls", h.GetUserURLs)
+		router.Get("/ping", h.PingDB)
 	})
 
 	return router

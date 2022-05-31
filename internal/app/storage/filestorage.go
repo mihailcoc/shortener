@@ -165,6 +165,11 @@ func (repo *Repository) GetUserURLs(ctx context.Context, userID model.UserID) ([
 	return result, nil
 }
 
+// функция которая проверяет соединение в базой данных
+func (repo *Repository) Ping(ctx context.Context) error {
+	return errors.New("not supported with filebase repository")
+}
+
 // функция для чтения ряда из файла
 func (repo *Repository) readRow(reader *bufio.Scanner) (bool, error) {
 	// проверка если есть что читать.

@@ -39,6 +39,10 @@ func NewConfig() Config {
 	if checkExists("f") {
 		flag.StringVar(&cfg.FileStoragePath, "f", cfg.FileStoragePath, "FileStoragePath")
 	}
+	// Задаем флаг для d переменной окружения DatabaseDSN
+	if checkExists("d") {
+		flag.StringVar(&cfg.DatabaseDSN, "d", cfg.DatabaseDSN, "DatabaseDSN")
+	}
 	// Парсим флаги
 	flag.Parse()
 
