@@ -27,8 +27,6 @@ func main() {
 
 	cfg := configs.NewConfig()
 
-	//var repo handler.Repository
-
 	// Создаём файловый репозиторий.
 	repo := storage.NewFileRepository(ctx, cfg.FileStoragePath, cfg.BaseURL)
 
