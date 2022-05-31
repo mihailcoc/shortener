@@ -58,6 +58,14 @@ type ErrorWithDB struct {
 	Title string
 }
 
+//  описываем новый handler
+func NewHandler(repo Repository, baseURL string) *Handler {
+	return &Handler{
+		repo:    repo,
+		baseURL: baseURL,
+	}
+}
+
 //  описываем новый handler по созданию короткого URL.
 func (h *Handler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	//Используем конструкцию отложенного исполнения defer, чтобы закрыть соединение и освободить ресурс
@@ -204,5 +212,41 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
 		return
+	}
+}
+
+// описываем хэндлер получающий все URL созданные пользователем
+func (h *Handler) GetUserURLs(w http.ResponseWriter, r *http.Request) {
+	// получаем из контекста запроса, значение userID
+	userIDCtx := r.Context().Value(mw.UserIDCtxName)
+	// определяем дефолное значение userID
+	userID := "default"
+	// если полученное из контекста запроса, значение userID не равно нулю то присваиваем переменной userID
+	if userIDCtx != nil {
+		userID = userIDCtx.(string)
+	}
+	// получаем URL пользователя через интерфейс для получения URL
+	urls, err := h.repo.GetUserURLs(r.Context(), userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if len(urls) == 0 {
+		http.Error(w, errors.New("no content").Error(), http.StatusNoContent)
+		return
+	}
+	// переводим URL в формат JSON
+	body, err := json.Marshal(urls)
+
+	if err == nil {
+		w.Header().Add("Content-Type", "application/json; charset=utf-8")
+
+		w.WriteHeader(http.StatusOK)
+
+		_, err = w.Write(body)
+		if err == nil {
+			return
+		}
 	}
 }

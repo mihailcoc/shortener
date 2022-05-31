@@ -5,9 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log"
 	"os"
 	"sync"
 
+	"github.com/mihailcoc/shortener/internal/app/handler"
 	"github.com/mihailcoc/shortener/internal/app/model"
 )
 
@@ -141,4 +143,66 @@ func (repo *Repository) GetURL(ctx context.Context, sl model.ShortURL) (model.Sh
 	}
 
 	return sl, nil
+}
+
+// функция для чтения ряда из файла
+func (repo *Repository) readRow(reader *bufio.Scanner) (bool, error) {
+	// проверка если есть что читать.
+	if !reader.Scan() {
+		return false, reader.Err()
+	}
+	// то читаем
+	data := reader.Bytes()
+	//определяем ряд для чтения
+	row := &row{}
+	// расшифровываем из JSON
+	err := json.Unmarshal(data, row)
+
+	if err != nil {
+		return false, err
+	}
+	// добавляем на вывод
+	repo.urls[row.ShortURL] = row.LongURL
+	// добавляем к репозиторию пользователя
+	repo.usersURL[row.User] = append(repo.usersURL[row.User], row.ShortURL)
+
+	return true, nil
+}
+
+// функция создающая файловый репозиторий
+func FileRepository(ctx context.Context, filePath string, baseURL string) *Repository {
+	repo := Repository{
+		urls:     model.ShortURLs{},
+		filePath: filePath,
+		baseURL:  baseURL,
+		usersURL: map[model.UserID][]model.ShortURL{},
+	}
+	// читаем файл
+	cns, err := NewConsumer(filePath)
+	if err != nil {
+		log.Printf("Error with reading file: %v\n", err)
+	}
+	// откладываем закрытие чтения файла
+	defer cns.Close()
+	// парсим файл из буфера
+	reader := bufio.NewScanner(cns.file)
+	for {
+		// читаем файл по строкам
+		ok, err := repo.readRow(reader)
+
+		if err != nil {
+			log.Printf("Error while parsing file: %v\n", err)
+		}
+
+		if !ok {
+			break
+		}
+	}
+
+	return &repo
+}
+
+// Переопределяем новый файловый репозиторий как репозиторий хэндлера.
+func NewFileRepository(ctx context.Context, filePath string, baseURL string) handler.Repository {
+	return handler.Repository(FileRepository(ctx, filePath, baseURL))
 }
