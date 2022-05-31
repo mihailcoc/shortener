@@ -59,13 +59,13 @@ func main() {
 	}
 	//
 	log.Println("Receive shutdown signal")
-	// Задаем контекст остановки сервера через 5 секунд
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// Задаем контекст остановки сервера через 1 секунду
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 1*time.Second)
 	// Откладываем остановку сервера
 	defer shutdownCancel()
 	// Если сервер запущен
 	if httpServer != nil {
-		// Если сервер запущен то останавливаем сервер через 5 секунд
+		// Если сервер запущен то останавливаем сервер через 1 секунд
 		_ = httpServer.Shutdown(shutdownCtx)
 	}
 	// Выводим сообщение после остановки сервера
