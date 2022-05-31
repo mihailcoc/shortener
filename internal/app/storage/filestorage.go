@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -143,6 +144,25 @@ func (repo *Repository) GetURL(ctx context.Context, sl model.ShortURL) (model.Sh
 	}
 
 	return sl, nil
+}
+
+// функция для получения всех когда либо сгенерированных URL пользователем
+func (repo *Repository) GetUserURLs(ctx context.Context, userID model.UserID) ([]handler.ResponseGetURL, error) {
+	repo.mtx.Lock()
+	defer repo.mtx.Unlock()
+
+	var result []handler.ResponseGetURL
+
+	shortLinks := repo.usersURL[userID]
+
+	for _, v := range shortLinks {
+		result = append(result, handler.ResponseGetURL{
+			ShortURL:    fmt.Sprintf("%s/%s", repo.baseURL, v),
+			OriginalURL: repo.urls[v],
+		})
+	}
+
+	return result, nil
 }
 
 // функция для чтения ряда из файла

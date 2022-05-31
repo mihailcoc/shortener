@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/mihailcoc/shortener/cmd/shortener/configs"
 	"github.com/mihailcoc/shortener/cmd/shortener/router"
@@ -56,8 +57,17 @@ func main() {
 	case <-ctx.Done():
 		break
 	}
+	//
 	log.Println("Receive shutdown signal")
-	_ = httpServer.Shutdown()
+	// Задаем контекст остановки сервера через 5 секунд
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// Откладываем остановку сервера
+	defer shutdownCancel()
+	// Если сервер запущен
+	if httpServer != nil {
+		// Если сервер запущен то останавливаем сервер через 5 секунд
+		_ = httpServer.Shutdown(shutdownCtx)
+	}
 	// Выводим сообщение после остановки сервера
 	err := g.Wait()
 	if err != nil {

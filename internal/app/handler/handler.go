@@ -31,8 +31,6 @@ type Repository interface {
 	GetURL(ctx context.Context, shortURL model.ShortURL) (model.ShortURL, error)
 	// интерфейс для получения URL созданных пользователем
 	GetUserURLs(ctx context.Context, user model.UserID) ([]ResponseGetURL, error)
-	// интерфейс для проверки связи с DB
-	Ping(ctx context.Context) error
 }
 
 //  описываем структуру Handler в запросе на получение данных их репозитория
@@ -56,6 +54,11 @@ type ResponseGetURL struct {
 type ErrorWithDB struct {
 	Err   error
 	Title string
+}
+
+// Error добавляет поддержку интерфейса error для типа ErrorWithDB.
+func (err *ErrorWithDB) Error() string {
+	return fmt.Sprintf("%v", err.Err)
 }
 
 //  описываем новый handler
