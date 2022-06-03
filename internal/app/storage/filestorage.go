@@ -51,7 +51,6 @@ type Repository struct {
 }
 
 func NewProducer(filename string) (*producer, error) {
-	// Открываем и записываем файл.
 	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
 
 	if err != nil {
@@ -71,7 +70,6 @@ func (p *producer) Close() error {
 }
 
 func NewConsumer(filename string) (*consumer, error) {
-	// Открываем и читаем файл.
 	file, err := os.OpenFile(filename, os.O_CREATE|os.O_RDONLY, 0777)
 
 	if err != nil {
@@ -96,7 +94,6 @@ func (repo *Repository) writeRow(longURL, shortURL, filePath, userID string) err
 	if err != nil {
 		return err
 	}
-	// сохраняем данные в JSON
 	data, err := json.Marshal(&row{
 		LongURL:  longURL,
 		ShortURL: shortURL,
@@ -133,7 +130,6 @@ func (repo *Repository) AddURL(ctx context.Context, longURL, shortURL string, us
 	return nil
 }
 
-// функция для получения URL
 func (repo *Repository) GetURL(ctx context.Context, sl model.ShortURL) (model.ShortURL, error) {
 	repo.mtx.Lock()
 	defer repo.mtx.Unlock()
@@ -146,7 +142,6 @@ func (repo *Repository) GetURL(ctx context.Context, sl model.ShortURL) (model.Sh
 	return sl, nil
 }
 
-// функция для получения всех когда либо сгенерированных URL пользователем
 func (repo *Repository) GetUserURLs(ctx context.Context, userID model.UserID) ([]handler.ResponseGetURL, error) {
 	repo.mtx.Lock()
 	defer repo.mtx.Unlock()
@@ -165,36 +160,27 @@ func (repo *Repository) GetUserURLs(ctx context.Context, userID model.UserID) ([
 	return result, nil
 }
 
-// функция которая проверяет соединение в базой данных
 func (repo *Repository) Ping(ctx context.Context) error {
 	return errors.New("not supported with filebase repository")
 }
 
-// функция для чтения ряда из файла
 func (repo *Repository) readRow(reader *bufio.Scanner) (bool, error) {
-	// проверка если есть что читать.
 	if !reader.Scan() {
 		return false, reader.Err()
 	}
-	// то читаем
 	data := reader.Bytes()
-	//определяем ряд для чтения
 	row := &row{}
-	// расшифровываем из JSON
 	err := json.Unmarshal(data, row)
 
 	if err != nil {
 		return false, err
 	}
-	// добавляем на вывод
 	repo.urls[row.ShortURL] = row.LongURL
-	// добавляем к репозиторию пользователя
 	repo.usersURL[row.User] = append(repo.usersURL[row.User], row.ShortURL)
 
 	return true, nil
 }
 
-// функция создающая файловый репозиторий
 func FileRepository(ctx context.Context, filePath string, baseURL string) *Repository {
 	repo := Repository{
 		urls:     model.ShortURLs{},
@@ -202,17 +188,13 @@ func FileRepository(ctx context.Context, filePath string, baseURL string) *Repos
 		baseURL:  baseURL,
 		usersURL: map[model.UserID][]model.ShortURL{},
 	}
-	// читаем файл
 	cns, err := NewConsumer(filePath)
 	if err != nil {
 		log.Printf("Error with reading file: %v\n", err)
 	}
-	// откладываем закрытие чтения файла
 	defer cns.Close()
-	// парсим файл из буфера
 	reader := bufio.NewScanner(cns.file)
 	for {
-		// читаем файл по строкам
 		ok, err := repo.readRow(reader)
 
 		if err != nil {
@@ -227,12 +209,10 @@ func FileRepository(ctx context.Context, filePath string, baseURL string) *Repos
 	return &repo
 }
 
-// Переопределяем новый файловый репозиторий как репозиторий хэндлера.
 func NewFileRepository(ctx context.Context, filePath string, baseURL string) handler.Repository {
 	return handler.Repository(FileRepository(ctx, filePath, baseURL))
 }
 
-// функция принимающая в теле запроса множество URL для сокращения
 func (repo *Repository) AddMultipleURLs(ctx context.Context, user model.UserID, urls ...handler.RequestGetURLs) ([]handler.ResponseGetURLs, error) {
 	return nil, nil
 }

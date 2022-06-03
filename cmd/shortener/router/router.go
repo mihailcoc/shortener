@@ -8,7 +8,6 @@ import (
 	"github.com/mihailcoc/shortener/internal/app/handler"
 )
 
-// определяем новый роутер для запуска нового сервера
 func NewRouter(repo handler.Repository, cfg configs.Config) *chi.Mux {
 	h := handler.NewHandler(repo, cfg.BaseURL)
 
@@ -16,7 +15,6 @@ func NewRouter(repo handler.Repository, cfg configs.Config) *chi.Mux {
 
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
-	// определяем связку хендлеров и адресов
 	router.Route("/", func(r chi.Router) {
 		router.Post("/", h.CreateShortURL)
 		router.Get("/{id}", h.RetrieveShortURL)

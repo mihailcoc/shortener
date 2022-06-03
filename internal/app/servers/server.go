@@ -10,7 +10,6 @@ import (
 	"github.com/mihailcoc/shortener/internal/app/mw"
 )
 
-// Задаём структуру сервера
 type CustomServer struct {
 	addr    string
 	key     []byte
@@ -18,7 +17,6 @@ type CustomServer struct {
 	s       *http.Server
 }
 
-// Функция запуска нового сервера
 func NewServer(addr string, key []byte, handler *chi.Mux) *CustomServer {
 	srv := &http.Server{
 		Addr:    addr,
@@ -33,7 +31,6 @@ func NewServer(addr string, key []byte, handler *chi.Mux) *CustomServer {
 	}
 }
 
-// Функция старта сервера
 func (s *CustomServer) StartServer() error {
 	log.Printf("Сервер запущен")
 	err := s.s.ListenAndServe()
@@ -44,7 +41,6 @@ func (s *CustomServer) StartServer() error {
 	return nil
 }
 
-// Функция закрытия сервера
 func (s *CustomServer) Shutdown(ctx context.Context) error {
 	log.Printf("Сервер остановлен")
 	err := s.s.Shutdown(ctx)

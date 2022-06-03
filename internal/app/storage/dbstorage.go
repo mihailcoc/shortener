@@ -61,7 +61,6 @@ func (db *PostgresDatabase) AddURL(ctx context.Context, longURL model.LongURL, s
 	return err
 }
 
-// Функция для получения URL из базы данных
 func (db *PostgresDatabase) GetURL(ctx context.Context, shortURL model.ShortURL) (model.ShortURL, error) {
 	// Пишем запрос к базе данных выбрать URL где указателем будет short_url.
 	sqlGetURLRow := `SELECT origin_url, is_deleted FROM urls WHERE short_url=$1 LIMIT 1`
@@ -86,7 +85,6 @@ func (db *PostgresDatabase) GetURL(ctx context.Context, shortURL model.ShortURL)
 	return result.OriginalURL, nil
 }
 
-// Функция для получения всех URLсозданных пользователем.
 func (db *PostgresDatabase) GetUserURLs(ctx context.Context, user model.UserID) ([]handler.ResponseGetURL, error) {
 	var result []handler.ResponseGetURL
 	// Пишем запрос к базе данных выбрать URL где указателем будет user_id.
@@ -130,7 +128,6 @@ func (db *PostgresDatabase) Ping(ctx context.Context) error {
 	return nil
 }
 
-// Функция добавления записей об url (user_id, origin_url, short_url)
 func (db *PostgresDatabase) AddMultipleURLs(ctx context.Context, user model.UserID, urls ...handler.RequestGetURLs) ([]handler.ResponseGetURLs, error) {
 	var result []handler.ResponseGetURLs
 	// Создаем соединение с бд

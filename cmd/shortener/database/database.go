@@ -21,7 +21,6 @@ func Conn(driverName, dsn string) (*sql.DB, error) {
 	if err != nil {
 		return db, err
 	}
-	// выводим сообщение
 	log.Println("Connect to database")
 	// возвращаем бд
 	return db, nil
@@ -39,7 +38,6 @@ func SetUpDataBase(ctx context.Context, db *sql.DB) error {
 					);`
 	// отправляем команду на создание бд
 	res, err := db.ExecContext(ctx, sqlCreateDB)
-	// выводим сообщение
 	log.Println("Create table", err, res)
 
 	return nil

@@ -21,7 +21,6 @@ func checkExists(f string) bool {
 	return flag.Lookup(f) == nil
 }
 
-// Задаём функцию новых конфигураций
 func NewConfig() Config {
 
 	var cfg Config
@@ -38,23 +37,18 @@ func NewConfig() Config {
 		log.Fatal(err)
 	}
 
-	// Задаем флаг для b переменной окружения URL
 	if checkExists("b") {
 		flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "BaseUrl")
 	}
-	// Задаем флаг для a переменной окружения ServerAddress
 	if checkExists("a") {
 		flag.StringVar(&cfg.ServerAddress, "a", cfg.ServerAddress, "ServerAddress")
 	}
-	// Задаем флаг для f переменной окружения FileStoragePath
 	if checkExists("f") {
 		flag.StringVar(&cfg.FileStoragePath, "f", cfg.FileStoragePath, "FileStoragePath")
 	}
-	// Задаем флаг для d переменной окружения DatabaseDSN
 	if checkExists("d") {
 		flag.StringVar(&cfg.DatabaseDSN, "d", cfg.DatabaseDSN, "DatabaseDSN")
 	}
-	// Парсим флаги
 	flag.Parse()
 
 	return cfg

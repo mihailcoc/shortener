@@ -13,7 +13,6 @@ type gzipWriter struct {
 	Writer io.Writer
 }
 
-// Функция архивации
 func GzipHandle(next http.Handler) http.Handler {
 	// переопределяем вывод функции как хэндлер
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +25,6 @@ func GzipHandle(next http.Handler) http.Handler {
 				next.ServeHTTP(w, r)
 				return
 			}
-			//откладываем закрытие ридера
 			defer reader.Close()
 			r.Body = reader
 		}
