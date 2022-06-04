@@ -191,12 +191,12 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 			encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
 			encoder.Encode(result)
 
-			jsonResp, _ := json.Marshal(result)
-			_, err = w.Write(jsonResp)
-			if err != nil {
-				http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
-				return
-			}
+			//jsonResp, _ := json.Marshal(result)
+			//_, err = w.Write(jsonResp)
+			//if err != nil {
+			//	http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
+			//	return
+			//}
 			return
 		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -206,12 +206,12 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
 
-	jsonResp, _ := json.Marshal(result)
-	_, err = w.Write(jsonResp)
-	if err != nil {
-		http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
-		return
-	}
+	//jsonResp, _ := json.Marshal(result)
+	//_, err = w.Write(jsonResp)
+	//if err != nil {
+	//	http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
+	//	return
+	//}
 
 }
 
