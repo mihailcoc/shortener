@@ -169,12 +169,14 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "the URL property is missing", http.StatusBadRequest)
 		return
 	}
-	// спрятать в отдельную функцию GetUserID(r.Context())
-	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
-	userID := "default"
-	if userIDCtx != nil {
-		userID = userIDCtx.(string)
-	}
+	// спрятать в отдельную функцию
+	userID := crypt.GetUserID(r.Context(), r)
+	//ctx context.Context, r *http.Request
+	//userIDCtx := r.Context().Value(crypt.UserIDCtxName)
+	//userID := "default"
+	//if userIDCtx != nil {
+	//	userID = userIDCtx.(string)
+	//}
 	// спрятать в отдельную функцию
 	shortURL := shorturl.ShorterURL(url.URL)
 
