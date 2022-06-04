@@ -2,7 +2,6 @@ package mw
 
 import (
 	"context"
-	"log"
 	"net/http"
 
 	"github.com/gofrs/uuid"
@@ -20,10 +19,10 @@ func CookieMiddleware(key []byte) func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// получаем id пользователя из request.Cookie
 			cookieUserID, err := r.Cookie(CookieUserIDName)
-			if err != nil {
-				log.Printf("CookieUserID not found")
-				return
-			}
+			//if err != nil {
+			//	log.Printf("CookieUserID not found")
+			//	return
+			//}
 			// Зашифровываем куки
 			encryptor, err := crypt.CookieEncryptor(key)
 			// Проверяем на ошибки

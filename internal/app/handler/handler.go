@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -150,8 +149,18 @@ func (h *Handler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
+	result := map[string]string{}
+
+	body, errReadAll := io.ReadAll(r.Body)
+
+	if errReadAll != nil {
+		http.Error(w, errReadAll.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	url := URL{}
-	err := json.NewDecoder(r.Body).Decode(&url)
+	err := json.Unmarshal(body, &url)
+	//err := json.NewDecoder(r.Body).Decode(&url)
 	if err != nil {
 		http.Error(w, "an unexpected error when unmarshaling JSON", http.StatusBadRequest)
 		return
@@ -175,7 +184,7 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	//	result string 'json:"result"'
 	//}{}
 
-	result := map[string]string{}
+	//result := map[string]string{}
 
 	err = h.repo.AddURL(r.Context(), url.URL, shortURL, userID)
 
@@ -186,17 +195,25 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 			// result.result = slURL
 			w.Header().Add("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusConflict)
-			buf := bytes.NewBuffer([]byte{})
-			encoder := json.NewEncoder(buf)
-			encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
-			encoder.Encode(result)
+			body, err = json.Marshal(result)
+			if err != nil {
+				http.Error(w, "an unexpected error when marshaling JSON", http.StatusInternalServerError)
+				return
+			}
+
+			_, err = w.Write(body)
+
+			//buf := bytes.NewBuffer([]byte{})
+			//encoder := json.NewEncoder(buf)
+			//encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
+			//encoder.Encode(result)
 
 			//jsonResp, _ := json.Marshal(result)
 			//_, err = w.Write(jsonResp)
-			//if err != nil {
-			//	http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
-			//	return
-			//}
+			if err != nil {
+				http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
+				return
+			}
 			return
 		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -205,17 +222,25 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	result["result"] = slURL
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
-	buf := bytes.NewBuffer([]byte{})
-	encoder := json.NewEncoder(buf)
-	encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
-	encoder.Encode(result)
+	body, err = json.Marshal(result)
+	if err != nil {
+		http.Error(w, "an unexpected error when marshaling JSON", http.StatusInternalServerError)
+		return
+	}
+
+	_, err = w.Write(body)
+
+	//buf := bytes.NewBuffer([]byte{})
+	//encoder := json.NewEncoder(buf)
+	//encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
+	//encoder.Encode(result)
 
 	//jsonResp, _ := json.Marshal(result)
 	//_, err = w.Write(jsonResp)
-	//if err != nil {
-	//	http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
-	//	return
-	//}
+	if err != nil {
+		http.Error(w, "unexpected error when writing the response body", http.StatusInternalServerError)
+		return
+	}
 
 }
 
