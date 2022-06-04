@@ -205,6 +205,10 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	result["result"] = slURL
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
+	buf := bytes.NewBuffer([]byte{})
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
+	encoder.Encode(result)
 
 	//jsonResp, _ := json.Marshal(result)
 	//_, err = w.Write(jsonResp)
