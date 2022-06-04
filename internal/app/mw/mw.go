@@ -18,7 +18,7 @@ func CookieMiddleware(key []byte) func(next http.Handler) http.Handler {
 		// переопределяем вывод как http.handler функцию
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// получаем id пользователя из request.Cookie
-			cookieUserID, err := r.Cookie(CookieUserIDName)
+			cookieUserID, _ := r.Cookie(CookieUserIDName)
 			//if err != nil {
 			//	log.Printf("CookieUserID not found")
 			//	return
