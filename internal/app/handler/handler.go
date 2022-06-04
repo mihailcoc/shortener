@@ -113,13 +113,9 @@ func (h *Handler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "the body cannot be an empty", http.StatusBadRequest)
 		return
 	}
-	// спрятать в отдельную функцию GetUserID(r.Context())
-	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
-	userID := "default"
-	if userIDCtx != nil {
-		userID = userIDCtx.(string)
-	}
-	// спрятать в отдельную функцию
+
+	userID := crypt.GetUserID(r.Context(), r)
+
 	longURL := model.LongURL(body)
 	shortURL := shorturl.ShorterURL(longURL)
 	// добавляем URL через интерфейс для добавления URL
@@ -169,15 +165,8 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "the URL property is missing", http.StatusBadRequest)
 		return
 	}
-	// спрятать в отдельную функцию
 	userID := crypt.GetUserID(r.Context(), r)
-	//ctx context.Context, r *http.Request
-	//userIDCtx := r.Context().Value(crypt.UserIDCtxName)
-	//userID := "default"
-	//if userIDCtx != nil {
-	//	userID = userIDCtx.(string)
-	//}
-	// спрятать в отдельную функцию
+
 	shortURL := shorturl.ShorterURL(url.URL)
 
 	slURL := fmt.Sprintf("%s/%s", h.baseURL, shortURL)
@@ -266,13 +255,8 @@ func (h *Handler) RetrieveShortURL(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetUserURLs(w http.ResponseWriter, r *http.Request) {
-	// спрятать в отдельную функцию GetUserID(r.Context())
-	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
-	userID := "default"
-	if userIDCtx != nil {
-		userID = userIDCtx.(string)
-	}
-	// спрятать в отдельную функцию
+	userID := crypt.GetUserID(r.Context(), r)
+
 	urls, err := h.repo.GetUserURLs(r.Context(), userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -305,13 +289,9 @@ func (h *Handler) PingDB(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) CreateBatch(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var data []RequestGetURLs
-	// спрятать в отдельную функцию GetUserID(r.Context())
-	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
-	userID := "default"
-	if userIDCtx != nil {
-		userID = userIDCtx.(string)
-	}
-	// спрятать в отдельную функцию
+
+	userID := crypt.GetUserID(r.Context(), r)
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
