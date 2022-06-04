@@ -10,22 +10,24 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/go-chi/chi"
+	"github.com/mihailcoc/shortener/internal/app/crypt"
 	"github.com/mihailcoc/shortener/internal/app/model"
-	"github.com/mihailcoc/shortener/internal/app/mw"
 	"github.com/mihailcoc/shortener/internal/app/shorturl"
 )
 
 var (
-	urls = make(map[string]string)
+	urls        = make(map[string]string)
+	ErrNotFound = errors.New("not found")
+	ErrDelete   = errors.New("deleted")
 )
 
 // тег, значение которого нужно получить
 // имя поля, о котором нужно получить информацию.
 const (
-	targetField = "URL"
-	targetTag   = "json"
+	UniqConstraint = "UniqConstraint"
 )
 
 type Repository interface {
@@ -96,6 +98,11 @@ func NewHandler(repo Repository, baseURL string) *Handler {
 	}
 }
 
+func isURL(str string) bool {
+	u, err := url.Parse(str)
+	return err == nil && u.Scheme != "" && u.Host != ""
+}
+
 func (h *Handler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	log.Printf("CreateShortURL")
 	body, err := io.ReadAll(r.Body)
@@ -103,16 +110,17 @@ func (h *Handler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// непонятно какой пакет использовать, чтобы применить !isURL
-	if len(body) == 0 {
+	if !isURL(string(body)) {
 		http.Error(w, "the body cannot be an empty", http.StatusBadRequest)
 		return
 	}
-	userIDCtx := r.Context().Value(mw.UserIDCtxName)
+	// спрятать в отдельную функцию GetUserID(r.Context())
+	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
 	userID := "default"
 	if userIDCtx != nil {
 		userID = userIDCtx.(string)
 	}
+	// спрятать в отдельную функцию
 	longURL := model.LongURL(body)
 	shortURL := shorturl.ShorterURL(longURL)
 	// добавляем URL через интерфейс для добавления URL
@@ -120,7 +128,7 @@ func (h *Handler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var dbErr *ErrorWithDB
 		// перебирает все поля ошибки dbErr и возвращает true если поле Title равно UniqConstraint
-		if errors.As(err, &dbErr) && dbErr.Title == "UniqConstraint" {
+		if errors.As(err, &dbErr) && dbErr.Title == UniqConstraint {
 			w.Header().Add("Content-Type", "text/plain; charset=utf-8")
 			w.WriteHeader(http.StatusConflict)
 			slURL := fmt.Sprintf("%s/%s", h.baseURL, shortURL)
@@ -148,43 +156,41 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "an unexpected error when unmarshaling JSON", http.StatusBadRequest)
 		return
 	}
-	if url.URL == "" {
+	if !isURL(string(url.URL)) {
 		http.Error(w, "the URL property is missing", http.StatusBadRequest)
 		return
 	}
-	userIDCtx := r.Context().Value(mw.UserIDCtxName)
+	// спрятать в отдельную функцию GetUserID(r.Context())
+	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
 	userID := "default"
 	if userIDCtx != nil {
 		userID = userIDCtx.(string)
 	}
+	// спрятать в отдельную функцию
 	shortURL := shorturl.ShorterURL(url.URL)
 
 	slURL := fmt.Sprintf("%s/%s", h.baseURL, shortURL)
+
+	//type result struct {
+	//	result string 'json:"result"'
+	//}{}
 
 	result := map[string]string{}
 
 	err = h.repo.AddURL(r.Context(), url.URL, shortURL, userID)
 
-	//body, errReadAll := io.ReadAll(r.Body)
-	//if errReadAll != nil {
-	//	http.Error(w, errReadAll.Error(), http.StatusInternalServerError)
-	//	return
-	//}
 	if err != nil {
 		var dbErr *ErrorWithDB
-		if errors.As(err, &dbErr) && dbErr.Title == "UniqConstraint" {
+		if errors.As(err, &dbErr) && dbErr.Title == UniqConstraint {
 			result["result"] = slURL
+			// result.result = slURL
 			w.Header().Add("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusConflict)
 			buf := bytes.NewBuffer([]byte{})
 			encoder := json.NewEncoder(buf)
 			encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
 			encoder.Encode(result)
-			//body, err = json.Marshal(result)
-			//if err != nil {
-			//	http.Error(w, "an unexpected error when marshaling JSON", http.StatusInternalServerError)
-			//	return
-			//}
+
 			jsonResp, _ := json.Marshal(result)
 			_, err = w.Write(jsonResp)
 			if err != nil {
@@ -199,17 +205,7 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	result["result"] = slURL
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
-	//body, err = json.Marshal(result)
-	//if err != nil {
-	//	http.Error(w, "an unexpected error when marshaling JSON", http.StatusInternalServerError)
-	//	return
-	//}
 
-	//buf := bytes.NewBuffer([]byte{})
-	//encoder := json.NewEncoder(buf)
-	//encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
-	//encoder.Encode(result)
-	//err = json.NewEncoder(w).Encode(result)
 	jsonResp, _ := json.Marshal(result)
 	_, err = w.Write(jsonResp)
 	if err != nil {
@@ -220,24 +216,18 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) RetrieveShortURL(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "only GET requests are allowed", http.StatusMethodNotAllowed)
-		return
-	}
 	id := chi.URLParam(r, "id")
-	if id == "" {
-		http.Error(w, "the parameter is missing", http.StatusBadRequest)
-		return
-	}
+
 	url, err := h.repo.GetURL(r.Context(), id)
 	if err != nil {
-		var dbErr *ErrorWithDB
-
-		if errors.As(err, &dbErr) && dbErr.Title == "deleted" {
+		if errors.Is(err, ErrDelete) {
 			w.WriteHeader(http.StatusGone)
 			return
+		} else if errors.Is(err, ErrNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			return
 		}
-		http.Error(w, err.Error(), http.StatusNotFound)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Add("Location", url)
@@ -245,11 +235,13 @@ func (h *Handler) RetrieveShortURL(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetUserURLs(w http.ResponseWriter, r *http.Request) {
-	userIDCtx := r.Context().Value(mw.UserIDCtxName)
+	// спрятать в отдельную функцию GetUserID(r.Context())
+	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
 	userID := "default"
 	if userIDCtx != nil {
 		userID = userIDCtx.(string)
 	}
+	// спрятать в отдельную функцию
 	urls, err := h.repo.GetUserURLs(r.Context(), userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -274,6 +266,7 @@ func (h *Handler) PingDB(w http.ResponseWriter, r *http.Request) {
 	err := h.repo.Ping(r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	w.WriteHeader(http.StatusOK)
 }
@@ -281,11 +274,13 @@ func (h *Handler) PingDB(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) CreateBatch(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var data []RequestGetURLs
-	userIDCtx := r.Context().Value(mw.UserIDCtxName)
+	// спрятать в отдельную функцию GetUserID(r.Context())
+	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
 	userID := "default"
 	if userIDCtx != nil {
 		userID = userIDCtx.(string)
 	}
+	// спрятать в отдельную функцию
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -1,19 +1,25 @@
 package crypt
 
 import (
+	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/hex"
+	"net/http"
 
 	"github.com/google/uuid"
 )
+
+type ContextType string
+
+const UserIDCtxName ContextType = "ctxUserId"
 
 type Encryptor struct {
 	aesblock cipher.Block
 	key      []byte
 }
 
-func NewCipherBlock(key []byte) (*Encryptor, error) {
+func CookieEncryptor(key []byte) (*Encryptor, error) {
 	enc := Encryptor{
 		key: key,
 	}
@@ -53,4 +59,15 @@ func (e *Encryptor) Decode(value string) (string, error) {
 	}
 
 	return result.String(), nil
+}
+
+func GetUserID(ctx context.Context, r *http.Request) string {
+	userIDCtx := r.Context().Value(UserIDCtxName)
+	userID := "default"
+	if userIDCtx != nil {
+		userID = userIDCtx.(string)
+		return userID
+
+	}
+	return userID
 }

@@ -54,7 +54,7 @@ func (db *PostgresDatabase) AddURL(ctx context.Context, longURL model.LongURL, s
 		// Если ошибка добавления данных в бд равна 23505
 		if pgErr.Code == pgerrcode.UniqueViolation {
 			// возвращаем хендлер NewErrorWithDB с Title UniqConstraint
-			return handler.NewErrorWithDB(err, "UniqConstraint")
+			return handler.NewErrorWithDB(err, handler.UniqConstraint)
 		}
 	}
 
@@ -72,7 +72,7 @@ func (db *PostgresDatabase) GetURL(ctx context.Context, shortURL model.ShortURL)
 	//Вызываем метод Scan(), который ассоциирует результат с переменной.
 	err := row.Scan(&result.OriginalURL, &result.IsDeleted)
 	if err != nil {
-		return "", err
+		return "", sql.ErrNoRows
 	}
 	// если результат - пустая строка, возвращаем хендлер NewErrorWithDB с Title "Not found".
 	if result.OriginalURL == "" {

@@ -31,7 +31,7 @@ func SetUpDataBase(ctx context.Context, db *sql.DB) error {
 	// описываем форму полей в бд
 	sqlCreateDB := `CREATE TABLE IF NOT EXISTS urls (
 								id serial PRIMARY KEY,
-								user_id VARCHAR NOT NULL, 	
+								user_id uuid NOT NULL, 	
 								origin_url VARCHAR NOT NULL, 
 								short_url VARCHAR NOT NULL UNIQUE,
                                 is_deleted BOOLEAN NOT NULL DEFAULT FALSE

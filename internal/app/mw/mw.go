@@ -2,6 +2,7 @@ package mw
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/gofrs/uuid"
@@ -12,19 +13,19 @@ import (
 
 const CookieUserIDName = "user_id"
 
-type ContextType string
-
-const UserIDCtxName ContextType = "ctxUserId"
-
 func CookieMiddleware(key []byte) func(next http.Handler) http.Handler {
 	// переопределяем вывод куки как handler
 	return func(next http.Handler) http.Handler {
 		// переопределяем вывод как http.handler функцию
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// получаем id пользователя из request.Cookie
-			cookieUserID, _ := r.Cookie(CookieUserIDName)
+			cookieUserID, err := r.Cookie(CookieUserIDName)
+			if err != nil {
+				log.Printf("CookieUserID not found")
+				return
+			}
 			// Зашифровываем куки
-			encryptor, err := crypt.NewCipherBlock(key)
+			encryptor, err := crypt.CookieEncryptor(key)
 			// Проверяем на ошибки
 			if err != nil {
 				return
@@ -35,7 +36,7 @@ func CookieMiddleware(key []byte) func(next http.Handler) http.Handler {
 
 				if err == nil {
 					// run the original handler
-					next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), UserIDCtxName, userID)))
+					next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), crypt.UserIDCtxName, userID)))
 					return
 				}
 			}
@@ -51,7 +52,7 @@ func CookieMiddleware(key []byte) func(next http.Handler) http.Handler {
 			// устанавливаем куки
 			http.SetCookie(w, cookie)
 			// run the original handler
-			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), UserIDCtxName, userID.String())))
+			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), crypt.UserIDCtxName, userID.String())))
 		})
 	}
 }
