@@ -85,6 +85,19 @@ func (db *PostgresDatabase) GetURL(ctx context.Context, shortURL model.ShortURL)
 	return result.OriginalURL, nil
 }
 
+func (db *PostgresDatabase) isOwner(ctx context.Context, url string, user string) (bool, error) {
+	sqlGetURLRow := `SELECT user_id FROM urls WHERE short_url=$1 FETCH FIRST ROW ONLY;`
+	query := db.conn.QueryRowContext(ctx, sqlGetURLRow, url)
+	result := ""
+
+	err := query.Scan(&result)
+	if err != nil {
+		return false, err
+	}
+
+	return result == user, nil
+}
+
 func (db *PostgresDatabase) GetUserURLs(ctx context.Context, user model.UserID) ([]handler.ResponseGetURL, error) {
 	var result []handler.ResponseGetURL
 	// Пишем запрос к базе данных выбрать URL где указателем будет user_id.
@@ -177,4 +190,54 @@ func (db *PostgresDatabase) AddMultipleURLs(ctx context.Context, user model.User
 	}
 
 	return result, nil
+}
+
+func (db *PostgresDatabase) DeleteMultipleURLs(ctx context.Context, user model.UserID, urls ...string) error {
+	tx, err := db.conn.Begin()
+	if err != nil {
+		return err
+	}
+
+	stmt, err := tx.PrepareContext(ctx, `UPDATE urls SET is_deleted=true WHERE short_url=$1;`)
+	if err != nil {
+		return err
+	}
+
+	defer func(tx *sql.Tx) {
+		_ = tx.Rollback()
+	}(tx)
+
+	defer func(stmt *sql.Stmt) {
+		err = stmt.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(stmt)
+
+	var urlsToDelete []string
+
+	for _, url := range urls {
+		isOwner, err := db.isOwner(ctx, url, user)
+
+		if err == nil && isOwner {
+			urlsToDelete = append(urlsToDelete, url)
+		}
+	}
+
+	for _, url := range urlsToDelete {
+		if _, err = stmt.ExecContext(ctx, url); err != nil {
+			return err
+		}
+	}
+
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

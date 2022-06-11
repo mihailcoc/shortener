@@ -325,3 +325,56 @@ func (h *Handler) CreateBatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h *Handler) DeleteBatch(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "only DELETE requests are allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
+
+	userID := "default"
+
+	if userIDCtx != nil {
+		userID = userIDCtx.(string)
+	}
+
+	defer r.Body.Close()
+
+	var data []string
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var sliceData [][]string
+
+	for i := 10; i <= len(data); i += 10 {
+		sliceData = append(sliceData, data[i-10:i])
+	}
+
+	rem := len(data) % 10
+	if rem > 0 {
+		sliceData = append(sliceData, data[len(data)-rem:])
+	}
+
+	for _, item := range sliceData {
+		func(taskData []string) {
+			h.wp.Push(func(ctx context.Context) error {
+				err := h.repo.DeleteMultipleURLs(ctx, userID, taskData...)
+				return err
+			})
+		}(item)
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+}

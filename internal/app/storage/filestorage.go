@@ -216,3 +216,7 @@ func NewFileRepository(ctx context.Context, filePath string, baseURL string) han
 func (repo *Repository) AddMultipleURLs(ctx context.Context, user model.UserID, urls ...handler.RequestGetURLs) ([]handler.ResponseGetURLs, error) {
 	return nil, nil
 }
+
+func (repo *Repository) DeleteMultipleURLs(ctx context.Context, user model.UserID, urls ...string) error {
+	return nil
+}
