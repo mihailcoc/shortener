@@ -93,11 +93,11 @@ func NewErrorWithDB(err error, title string) error {
 	}
 }
 
-func NewHandler(repo Repository, baseURL string) *Handler {
+func NewHandler(repo Repository, baseURL string, wp *workers.WorkerPool) *Handler {
 	return &Handler{
-		repo:    repo,
-		baseURL: baseURL,
-		//workerPool: wp,
+		repo:       repo,
+		baseURL:    baseURL,
+		workerPool: wp,
 	}
 }
 
@@ -328,13 +328,7 @@ func (h *Handler) CreateBatch(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) DeleteBatch(w http.ResponseWriter, r *http.Request) {
 
-	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
-
-	userID := "default"
-
-	if userIDCtx != nil {
-		userID = userIDCtx.(string)
-	}
+	userID := crypt.GetUserID(r.Context(), r)
 
 	defer r.Body.Close()
 
