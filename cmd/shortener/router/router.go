@@ -22,6 +22,7 @@ func NewRouter(repo handler.Repository, cfg configs.Config) *chi.Mux {
 		router.Get("/api/user/urls", h.GetUserURLs)
 		router.Get("/ping", h.PingDB)
 		router.Post("/api/shorten/batch", h.CreateBatch)
+		router.Delete("/api/user/urls", h.DeleteBatch)
 	})
 
 	return router

@@ -14,6 +14,7 @@ import (
 	"github.com/mihailcoc/shortener/internal/app/handler"
 	"github.com/mihailcoc/shortener/internal/app/servers"
 	"github.com/mihailcoc/shortener/internal/app/storage"
+	"github.com/mihailcoc/shortener/internal/app/workers"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -30,6 +31,13 @@ func main() {
 	cfg := configs.NewConfig()
 
 	var repo handler.Repository
+
+	wp := workers.NewWorker(ctx, cfg.Workers, cfg.WorkersBuffer)
+
+	go func() {
+		wp.Run(ctx)
+	}()
+	defer wp.Stop()
 	// Если переменная бд не задана.
 	if cfg.DatabaseDSN != "" {
 		// Создаём соединение в бд
@@ -76,8 +84,11 @@ func main() {
 	}
 	//
 	log.Println("Receive shutdown signal")
+
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 1*time.Second)
+
 	defer shutdownCancel()
+
 	if httpServer != nil {
 		_ = httpServer.Shutdown(shutdownCtx)
 	}

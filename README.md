@@ -21,3 +21,7 @@ git fetch template && git checkout template/main .github
 ```
 
 Затем добавьте полученные изменения в свой репозиторий.
+
+git add --all
+git commit -m "My first commit"
+git push --set-upstream origin inc12

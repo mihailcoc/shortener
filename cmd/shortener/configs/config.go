@@ -15,6 +15,8 @@ type Config struct {
 	FileStoragePath string `env:"FILE_STORAGE_PATH" envDefault:"storage.json"`
 	DatabaseDSN     string `env:"DATABASE_DSN"`
 	Key             []byte
+	Workers         int `env:"WORKERS" envDefault:"10"`
+	WorkersBuffer   int `env:"WORKERS_BUFFER" envDefault:"100"`
 }
 
 func checkExists(f string) bool {
@@ -48,6 +50,13 @@ func NewConfig() Config {
 	}
 	if checkExists("d") {
 		flag.StringVar(&cfg.DatabaseDSN, "d", cfg.DatabaseDSN, "DatabaseDSN")
+	}
+	if checkExists("w") {
+		flag.IntVar(&cfg.Workers, "w", cfg.Workers, "Workers")
+	}
+
+	if checkExists("wb") {
+		flag.IntVar(&cfg.WorkersBuffer, "wb", cfg.WorkersBuffer, "WorkersBuffer")
 	}
 	flag.Parse()
 

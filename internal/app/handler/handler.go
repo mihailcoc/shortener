@@ -15,6 +15,7 @@ import (
 	"github.com/mihailcoc/shortener/internal/app/crypt"
 	"github.com/mihailcoc/shortener/internal/app/model"
 	"github.com/mihailcoc/shortener/internal/app/shorturl"
+	"github.com/mihailcoc/shortener/internal/app/workers"
 )
 
 var (
@@ -38,11 +39,13 @@ type Repository interface {
 	Ping(ctx context.Context) error
 	// интерфейс для добавления множества URL
 	AddMultipleURLs(ctx context.Context, user model.UserID, urls ...RequestGetURLs) ([]ResponseGetURLs, error)
+	DeleteMultipleURLs(ctx context.Context, user model.UserID, urls ...string) error
 }
 
 type Handler struct {
 	repo    Repository
 	baseURL string
+	wp      *workers.WorkerPool
 }
 
 //  описываем структуру JSON в запросе - {"url":"<some_url>"}
@@ -94,6 +97,7 @@ func NewHandler(repo Repository, baseURL string) *Handler {
 	return &Handler{
 		repo:    repo,
 		baseURL: baseURL,
+		wp:      wp,
 	}
 }
 
