@@ -35,3 +35,4 @@ go get github.com/google/uuid
 go get github.com/jackc/pgerrcode
 go get github.com/lib/pq
 go get github.com/mihailcoc/shortener/internal/app/workers
+go get golang.org/x/sync/errgroup
