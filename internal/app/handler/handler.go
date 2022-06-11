@@ -263,7 +263,7 @@ func (h *Handler) GetUserURLs(w http.ResponseWriter, r *http.Request) {
 
 	urls, err := h.repo.GetUserURLs(r.Context(), userID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusGone)
 		return
 	}
 	if len(urls) == 0 {
