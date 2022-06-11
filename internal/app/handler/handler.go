@@ -327,10 +327,6 @@ func (h *Handler) CreateBatch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteBatch(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodDelete {
-		http.Error(w, "only DELETE requests are allowed", http.StatusMethodNotAllowed)
-		return
-	}
 
 	userIDCtx := r.Context().Value(crypt.UserIDCtxName)
 

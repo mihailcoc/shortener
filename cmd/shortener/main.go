@@ -60,7 +60,7 @@ func main() {
 
 	g, ctx := errgroup.WithContext(ctx)
 
-	handler := router.NewRouter(repo, cfg)
+	handler := router.NewRouter(repo, cfg, wp)
 	// Запускаем функцию с контекстом errgroup.WithContext(ctx)
 	g.Go(func() error {
 		//Создаем новый сервер

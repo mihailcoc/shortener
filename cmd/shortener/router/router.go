@@ -6,10 +6,11 @@ import (
 
 	"github.com/mihailcoc/shortener/cmd/shortener/configs"
 	"github.com/mihailcoc/shortener/internal/app/handler"
+	"github.com/mihailcoc/shortener/internal/app/workers"
 )
 
-func NewRouter(repo handler.Repository, cfg configs.Config) *chi.Mux {
-	h := handler.NewHandler(repo, cfg.BaseURL)
+func NewRouter(repo handler.Repository, cfg configs.Config, wp *workers.WorkerPool) *chi.Mux {
+	h := handler.NewHandler(repo, cfg.BaseURL, wp)
 
 	router := chi.NewRouter()
 
