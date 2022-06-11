@@ -251,7 +251,7 @@ func (h *Handler) RetrieveShortURL(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusGone)
 		return
 	}
 	w.Header().Add("Location", url)
