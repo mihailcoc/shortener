@@ -35,9 +35,9 @@ func main() {
 	wp := workers.NewWorker(ctx, cfg.Workers, cfg.WorkersBuffer)
 
 	go func() {
-		wp.Run(ctx)
+		wp.WorkerRun(ctx)
 	}()
-	defer wp.Stop()
+	defer wp.WorkerStop()
 	// Если переменная бд не задана.
 	if cfg.DatabaseDSN != "" {
 		// Создаём соединение в бд

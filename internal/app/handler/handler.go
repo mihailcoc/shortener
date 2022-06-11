@@ -43,9 +43,9 @@ type Repository interface {
 }
 
 type Handler struct {
-	repo    Repository
-	baseURL string
-	wp      *workers.WorkerPool
+	repo       Repository
+	baseURL    string
+	workerPool *workers.WorkerPool
 }
 
 //  описываем структуру JSON в запросе - {"url":"<some_url>"}
@@ -97,7 +97,7 @@ func NewHandler(repo Repository, baseURL string) *Handler {
 	return &Handler{
 		repo:    repo,
 		baseURL: baseURL,
-		wp:      wp,
+		//workerPool: wp,
 	}
 }
 
@@ -369,7 +369,7 @@ func (h *Handler) DeleteBatch(w http.ResponseWriter, r *http.Request) {
 
 	for _, item := range sliceData {
 		func(taskData []string) {
-			h.wp.Push(func(ctx context.Context) error {
+			h.workerPool.WorkerPush(func(ctx context.Context) error {
 				err := h.repo.DeleteMultipleURLs(ctx, userID, taskData...)
 				return err
 			})
