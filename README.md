@@ -21,3 +21,22 @@ git fetch template && git checkout template/main .github
 ```
 
 Затем добавьте полученные изменения в свой репозиторий.
+
+git add --all
+git commit -m "My first commit"
+git push --set-upstream origin inc12
+
+
+go get github.com/caarlos0/env
+go get github.com/go-chi/chi
+go get github.com/go-chi/chi/v5/middleware
+go get github.com/gofrs/uuid
+go get github.com/google/uuid
+go get github.com/jackc/pgerrcode
+go get github.com/lib/pq
+go get github.com/mihailcoc/shortener/internal/app/workers
+go get golang.org/x/sync/errgroup
+
+git add --all
+git commit -m "My first commit"
+git push --set-upstream origin inc14
