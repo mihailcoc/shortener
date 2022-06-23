@@ -99,15 +99,15 @@ func main() {
 			}
 		// Вычитываем значение из канала tm
 		case <-tm:
+			// Останавливаем таймер
+			timer.Stop()
+			// Переменную tm обозначающую канал делаем 0.
+			tm = nil
 		case <-interrupt:
 			break
 		case <-ctx.Done():
 			break
 		}
-		// Останавливаем таймер
-		timer.Stop()
-		// Переменную tm обозначающую канал делаем 0.
-		tm = nil
 
 		log.Println("Receive shutdown signal")
 
