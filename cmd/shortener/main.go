@@ -105,8 +105,8 @@ func main() {
 			tm = nil
 		case <-interrupt:
 			break
-		case <-ctx.Done():
-			break
+			//case <-ctx.Done():
+			//	break
 		}
 
 		log.Println("Receive shutdown signal")
