@@ -346,25 +346,26 @@ func (h *Handler) DeleteBatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var sliceData [][]string
+	//var sliceData [][]string
 
-	for i := 10; i <= len(data); i += 10 {
-		sliceData = append(sliceData, data[i-10:i])
-	}
+	//for i := 10; i <= len(data); i += 10 {
+	//	sliceData = append(sliceData, data[i-10:i])
+	//}
 
-	rem := len(data) % 10
-	if rem > 0 {
-		sliceData = append(sliceData, data[len(data)-rem:])
-	}
+	//rem := len(data) % 10
+	//if rem > 0 {
+	//	sliceData = append(sliceData, data[len(data)-rem:])
+	//}
 
-	for _, item := range sliceData {
-		func(taskData []string) {
-			h.workerPool.WorkerPush(func(ctx context.Context) error {
-				err := h.repo.DeleteMultipleURLs(ctx, userID, taskData...)
-				return err
-			})
-		}(item)
-	}
+	//for _, item := range sliceData {
+	//	func(taskData []string) {
+	h.workerPool.WorkerPush(func(ctx context.Context) error {
+		//err := h.repo.DeleteMultipleURLs(ctx, userID, taskData...)
+		err := h.repo.DeleteMultipleURLs(ctx, userID)
+		return err
+	})
+	//	}(item)
+	//}
 
 	w.WriteHeader(http.StatusAccepted)
 }

@@ -18,6 +18,8 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+type Delete struct{}
+
 func main() {
 	var httpServer *servers.CustomServer
 	// инициируем контекст
@@ -75,26 +77,52 @@ func main() {
 
 		return nil
 	})
+	// Создаем канал Delete
+	in := make(chan Delete)
+	// Создаем буфер Delete
+	var buf []Delete
+	// Создаем структуру tm
+	var tm <-chan time.Time
+	// Задаем переменную timer
+	var timer *time.Timer
+	for {
+		select {
+		// Вычитываем значение из канала in
+		case del := <-in:
+			if len(buf) == 0 {
+				timer = time.NewTimer(1000 * time.Millisecond)
+				tm = timer.C
+			}
+			buf = append(buf, del)
+			if len(buf) != 10000 {
+				continue
+			}
+		// Вычитываем значение из канала tm
+		case <-tm:
+		case <-interrupt:
+			break
+		case <-ctx.Done():
+			break
+		}
+		// Останавливаем таймер
+		timer.Stop()
+		// Переменную tm обозначающую канал делаем 0.
+		tm = nil
 
-	select {
-	case <-interrupt:
-		break
-	case <-ctx.Done():
-		break
+		log.Println("Receive shutdown signal")
+
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 1*time.Second)
+
+		defer shutdownCancel()
+
+		if httpServer != nil {
+			_ = httpServer.Shutdown(shutdownCtx)
+		}
+		err := g.Wait()
+		if err != nil {
+			log.Printf("server returning an error: %v", err)
+			os.Exit(2)
+		}
 	}
-	//
-	log.Println("Receive shutdown signal")
 
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 1*time.Second)
-
-	defer shutdownCancel()
-
-	if httpServer != nil {
-		_ = httpServer.Shutdown(shutdownCtx)
-	}
-	err := g.Wait()
-	if err != nil {
-		log.Printf("server returning an error: %v", err)
-		os.Exit(2)
-	}
 }

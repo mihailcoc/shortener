@@ -198,7 +198,7 @@ func (db *PostgresDatabase) DeleteMultipleURLs(ctx context.Context, user model.U
 		return err
 	}
 
-	stmt, err := tx.PrepareContext(ctx, `UPDATE urls SET is_deleted=true WHERE short_url=$1;`)
+	stmt, err := tx.PrepareContext(ctx, `UPDATE urls SET is_deleted=true WHERE short_url=$1 AND user_id = $2;`)
 	if err != nil {
 		return err
 	}
