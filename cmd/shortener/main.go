@@ -105,23 +105,23 @@ func main() {
 			tm = nil
 		case <-interrupt:
 			break
-			//case <-ctx.Done():
-			//	break
+		case <-ctx.Done():
+			break
+		}
 
-			log.Println("Receive shutdown signal")
+		log.Println("Receive shutdown signal")
 
-			shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 1*time.Second)
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 1*time.Second)
 
-			defer shutdownCancel()
+		defer shutdownCancel()
 
-			if httpServer != nil {
-				_ = httpServer.Shutdown(shutdownCtx)
-			}
-			err := g.Wait()
-			if err != nil {
-				log.Printf("server returning an error: %v", err)
-				os.Exit(2)
-			}
+		if httpServer != nil {
+			_ = httpServer.Shutdown(shutdownCtx)
+		}
+		err := g.Wait()
+		if err != nil {
+			log.Printf("server returning an error: %v", err)
+			os.Exit(2)
 		}
 	}
 
